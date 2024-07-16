@@ -1,0 +1,3023 @@
+!-*-f90-*-
+!
+! API: Special Functions
+!
+!> \page "Comments on special functions"
+!> Please go to api/specfunc.finc for the API documentation.
+!>
+!> Functions for which two identical names would result due to LC/UC aliasing have been assigned
+!> new names. The name mappings are given in the following table. The additional letters
+!> <STRONG>c</STRONG> viz
+!> <STRONG>s</STRONG> are used to denote cylindrical and spherical Bessel functions, respectively.
+!> <TABLE>
+!> <TR><TH>      C name           <TH>              Fortran name
+!> <TR><TD>    gsl_sf_bessel_J0   <TD>             fgsl_sf_bessel_jc0
+!> <TR><TD>    gsl_sf_bessel_J0_e <TD>             fgsl_sf_bessel_jc0_e
+!> <TR><TD>    gsl_sf_bessel_J1   <TD>             fgsl_sf_bessel_jc1
+!> <TR><TD>    gsl_sf_bessel_J1_e  <TD>            fgsl_sf_bessel_jc1_e
+!> <TR><TD>    gsl_sf_bessel_Jn    <TD>            fgsl_sf_bessel_jcn
+!> <TR><TD>    gsl_sf_bessel_Jn_e  <TD>            fgsl_sf_bessel_jcn_e
+!> <TR><TD>    gsl_sf_bessel_Jn_array <TD>         fgsl_sf_bessel_jcn_array
+!> <TR><TD>    gsl_sf_bessel_Y0    <TD>            fgsl_sf_bessel_yc0
+!> <TR><TD>    gsl_sf_bessel_Y0_e  <TD>            fgsl_sf_bessel_yc0_e
+!> <TR><TD>    gsl_sf_bessel_Y1    <TD>            fgsl_sf_bessel_yc1
+!> <TR><TD>    gsl_sf_bessel_Y1_e  <TD>            fgsl_sf_bessel_yc1_e
+!> <TR><TD>    gsl_sf_bessel_Yn    <TD>            fgsl_sf_bessel_ycn
+!> <TR><TD>    gsl_sf_bessel_Yn_e  <TD>            fgsl_sf_bessel_ycn_e
+!> <TR><TD>    gsl_sf_bessel_Yn_array <TD>         fgsl_sf_bessel_ycn_array
+!> <TR><TD>    gsl_sf_bessel_I0    <TD>            fgsl_sf_bessel_ic0
+!> <TR><TD>    gsl_sf_bessel_I0_e  <TD>            fgsl_sf_bessel_ic0_e
+!> <TR><TD>    gsl_sf_bessel_I1    <TD>            fgsl_sf_bessel_ic1
+!> <TR><TD>    gsl_sf_bessel_I1_e  <TD>            fgsl_sf_bessel_ic1_e
+!> <TR><TD>    gsl_sf_bessel_In    <TD>            fgsl_sf_bessel_icn
+!> <TR><TD>    gsl_sf_bessel_In_e  <TD>            fgsl_sf_bessel_icn_e
+!> <TR><TD>    gsl_sf_bessel_In_array  <TD>        fgsl_sf_bessel_icn_array
+!> <TR><TD>    gsl_sf_bessel_I0_scaled <TD>        fgsl_sf_bessel_ic0_scaled
+!> <TR><TD>    gsl_sf_bessel_I0_scaled_e <TD>      fgsl_sf_bessel_ic0_scaled_e
+!> <TR><TD>    gsl_sf_bessel_I1_scaled   <TD>      fgsl_sf_bessel_ic1_scaled
+!> <TR><TD>    gsl_sf_bessel_I1_scaled_e <TD>      fgsl_sf_bessel_ic1_scaled_e
+!> <TR><TD>    gsl_sf_bessel_In_scaled   <TD>      fgsl_sf_bessel_icn_scaled
+!> <TR><TD>    gsl_sf_bessel_In_scaled_e <TD>      fgsl_sf_bessel_icn_scaled_e
+!> <TR><TD>    gsl_sf_bessel_In_scaled_array <TD>  fgsl_sf_bessel_icn_scaled_array
+!> <TR><TD>    gsl_sf_bessel_K0     <TD>           fgsl_sf_bessel_kc0
+!> <TR><TD>    gsl_sf_bessel_K0_e   <TD>           fgsl_sf_bessel_kc0_e
+!> <TR><TD>    gsl_sf_bessel_K1     <TD>           fgsl_sf_bessel_kc1
+!> <TR><TD>    gsl_sf_bessel_K1_e   <TD>           fgsl_sf_bessel_kc1_e
+!> <TR><TD>    gsl_sf_bessel_Kn     <TD>           fgsl_sf_bessel_kcn
+!> <TR><TD>    gsl_sf_bessel_Kn_e   <TD>           fgsl_sf_bessel_kcn_e
+!> <TR><TD>    gsl_sf_bessel_Kn_array   <TD>       fgsl_sf_bessel_kcn_array
+!> <TR><TD>    gsl_sf_bessel_K0_scaled  <TD>       fgsl_sf_bessel_kc0_scaled
+!> <TR><TD>    gsl_sf_bessel_K0_scaled_e  <TD>     fgsl_sf_bessel_kc0_scaled_e
+!> <TR><TD>    gsl_sf_bessel_K1_scaled    <TD>     fgsl_sf_bessel_kc1_scaled
+!> <TR><TD>    gsl_sf_bessel_K1_scaled_e  <TD>     fgsl_sf_bessel_kc1_scaled_e
+!> <TR><TD>    gsl_sf_bessel_Kn_scaled    <TD>     fgsl_sf_bessel_kcn_scaled
+!> <TR><TD>    gsl_sf_bessel_Kn_scaled_e  <TD>     fgsl_sf_bessel_kcn_scaled_e
+!> <TR><TD>    gsl_sf_bessel_Kn_scaled_array  <TD> fgsl_sf_bessel_kcn_scaled_array
+!> <TR><TD>    gsl_sf_bessel_j0      <TD>          fgsl_sf_bessel_js0
+!> <TR><TD>    gsl_sf_bessel_j0_e    <TD>          fgsl_sf_bessel_js0_e
+!> <TR><TD>    gsl_sf_bessel_j1      <TD>          fgsl_sf_bessel_js1
+!> <TR><TD>    gsl_sf_bessel_j1_e    <TD>          fgsl_sf_bessel_js1_e
+!> <TR><TD>    gsl_sf_bessel_j2      <TD>          fgsl_sf_bessel_js2
+!> <TR><TD>    gsl_sf_bessel_j2_e     <TD>         fgsl_sf_bessel_js2_e
+!> <TR><TD>    gsl_sf_bessel_jl      <TD>          fgsl_sf_bessel_jsl
+!> <TR><TD>    gsl_sf_bessel_jl_e    <TD>          fgsl_sf_bessel_jsl_e
+!> <TR><TD>    gsl_sf_bessel_jl_array  <TD>        fgsl_sf_bessel_jsl_array
+!> <TR><TD>    gsl_sf_bessel_jl_steed_array <TD>   fgsl_sf_bessel_jsl_steed_array
+!> <TR><TD>    gsl_sf_bessel_y0      <TD>          fgsl_sf_bessel_ys0
+!> <TR><TD>    gsl_sf_bessel_y0_e    <TD>          fgsl_sf_bessel_ys0_e
+!> <TR><TD>    gsl_sf_bessel_y1      <TD>          fgsl_sf_bessel_ys1
+!> <TR><TD>    gsl_sf_bessel_y1_e    <TD>          fgsl_sf_bessel_ys1_e
+!> <TR><TD>    gsl_sf_bessel_y2      <TD>          fgsl_sf_bessel_ys2
+!> <TR><TD>    gsl_sf_bessel_y2_e     <TD>         fgsl_sf_bessel_ys2_e
+!> <TR><TD>    gsl_sf_bessel_yl      <TD>          fgsl_sf_bessel_ysl
+!> <TR><TD>    gsl_sf_bessel_yl_e      <TD>        fgsl_sf_bessel_ysl_e
+!> <TR><TD>    gsl_sf_bessel_yl_array   <TD>       fgsl_sf_bessel_ysl_array
+!> <TR><TD>    gsl_sf_bessel_i0_scaled  <TD>       fgsl_sf_bessel_is0_scaled
+!> <TR><TD>    gsl_sf_bessel_i0_scaled_e <TD>      fgsl_sf_bessel_is0_scaled_e
+!> <TR><TD>    gsl_sf_bessel_i1_scaled   <TD>      fgsl_sf_bessel_is1_scaled
+!> <TR><TD>    gsl_sf_bessel_i1_scaled_e <TD>      fgsl_sf_bessel_is1_scaled_e
+!> <TR><TD>    gsl_sf_bessel_i2_scaled   <TD>      fgsl_sf_bessel_is2_scaled
+!> <TR><TD>    gsl_sf_bessel_i2_scaled_e <TD>      fgsl_sf_bessel_is2_scaled_e
+!> <TR><TD>    gsl_sf_bessel_il_scaled   <TD>      fgsl_sf_bessel_isl_scaled
+!> <TR><TD>    gsl_sf_bessel_il_scaled_e <TD>      fgsl_sf_bessel_isl_scaled_e
+!> <TR><TD>    gsl_sf_bessel_il_scaled_array <TD>  fgsl_sf_bessel_isl_scaled_array
+!> <TR><TD>    gsl_sf_bessel_k0_scaled   <TD>      fgsl_sf_bessel_ks0_scaled
+!> <TR><TD>    gsl_sf_bessel_k0_scaled_e <TD>      fgsl_sf_bessel_ks0_scaled_e
+!> <TR><TD>    gsl_sf_bessel_k1_scaled   <TD>      fgsl_sf_bessel_ks1_scaled
+!> <TR><TD>    gsl_sf_bessel_k1_scaled_e <TD>      fgsl_sf_bessel_ks1_scaled_e
+!> <TR><TD>    gsl_sf_bessel_k2_scaled   <TD>      fgsl_sf_bessel_ks2_scaled
+!> <TR><TD>    gsl_sf_bessel_k2_scaled_e  <TD>     fgsl_sf_bessel_ks2_scaled_e
+!> <TR><TD>    gsl_sf_bessel_kl_scaled    <TD>     fgsl_sf_bessel_ksl_scaled
+!> <TR><TD>    gsl_sf_bessel_kl_scaled_e  <TD>     fgsl_sf_bessel_ksl_scaled_e
+!> <TR><TD>    gsl_sf_bessel_kl_scaled_array <TD>  fgsl_sf_bessel_ksl_scaled_array
+!> <TR><TD>    gsl_sf_bessel_zero_J0      <TD>     fgsl_sf_bessel_zero_jc0
+!> <TR><TD>    gsl_sf_bessel_zero_J0_e    <TD>     fgsl_sf_bessel_zero_jc0_e
+!> <TR><TD>    gsl_sf_bessel_zero_J1      <TD>     fgsl_sf_bessel_zero_jc1
+!> <TR><TD>    gsl_sf_bessel_zero_J1_e    <TD>     fgsl_sf_bessel_zero_jc1_e
+!> <TR><TD>    gsl_sf_bessel_zero_Jnu     <TD>     fgsl_sf_bessel_zero_jcnu
+!> <TR><TD>   gsl_sf_bessel_zero_Jnu_e   <TD>     fgsl_sf_bessel_zero_jcnu_e
+!> </TABLE>
+!
+! Airy functions
+!
+  function fgsl_sf_airy_ai(x, mode)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_airy_ai
+    fgsl_sf_airy_ai = gsl_sf_airy_ai(x, mode%gsl_mode)
+  end function fgsl_sf_airy_ai
+  function fgsl_sf_airy_ai_e(x, mode, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_airy_ai_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_airy_ai_e = gsl_sf_airy_ai_e(x, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_airy_ai_e
+  function fgsl_sf_airy_bi(x, mode)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_airy_bi
+    fgsl_sf_airy_bi = gsl_sf_airy_bi(x, mode%gsl_mode)
+  end function fgsl_sf_airy_bi
+  function fgsl_sf_airy_bi_e(x, mode, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_airy_bi_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_airy_bi_e = gsl_sf_airy_bi_e(x, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_airy_bi_e
+  function fgsl_sf_airy_ai_scaled(x, mode)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_airy_ai_scaled
+    fgsl_sf_airy_ai_scaled = gsl_sf_airy_ai_scaled(x, mode%gsl_mode)
+  end function fgsl_sf_airy_ai_scaled
+  function fgsl_sf_airy_ai_scaled_e(x, mode, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_airy_ai_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_airy_ai_scaled_e = gsl_sf_airy_ai_scaled_e(x, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_airy_ai_scaled_e
+  function fgsl_sf_airy_bi_scaled(x, mode)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_airy_bi_scaled
+    fgsl_sf_airy_bi_scaled = gsl_sf_airy_bi_scaled(x, mode%gsl_mode)
+  end function fgsl_sf_airy_bi_scaled
+  function fgsl_sf_airy_bi_scaled_e(x, mode, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_airy_bi_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_airy_bi_scaled_e = gsl_sf_airy_bi_scaled_e(x, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_airy_bi_scaled_e
+  function fgsl_sf_airy_ai_deriv(x, mode)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_airy_ai_deriv
+    fgsl_sf_airy_ai_deriv = gsl_sf_airy_ai_deriv(x, mode%gsl_mode)
+  end function fgsl_sf_airy_ai_deriv
+  function fgsl_sf_airy_ai_deriv_e(x, mode, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_airy_ai_deriv_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_airy_ai_deriv_e = gsl_sf_airy_ai_deriv_e(x, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_airy_ai_deriv_e
+  function fgsl_sf_airy_bi_deriv(x, mode)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_airy_bi_deriv
+!
+    fgsl_sf_airy_bi_deriv = gsl_sf_airy_bi_deriv(x, mode%gsl_mode)
+  end function fgsl_sf_airy_bi_deriv
+  function fgsl_sf_airy_bi_deriv_e(x, mode, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_airy_bi_deriv_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_airy_bi_deriv_e = gsl_sf_airy_bi_deriv_e(x, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_airy_bi_deriv_e
+  function fgsl_sf_airy_ai_deriv_scaled(x, mode)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_airy_ai_deriv_scaled
+    fgsl_sf_airy_ai_deriv_scaled = gsl_sf_airy_ai_deriv_scaled(x, mode%gsl_mode)
+  end function fgsl_sf_airy_ai_deriv_scaled
+  function fgsl_sf_airy_ai_deriv_scaled_e(x, mode, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_airy_ai_deriv_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_airy_ai_deriv_scaled_e = gsl_sf_airy_ai_deriv_scaled_e(x, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_airy_ai_deriv_scaled_e
+  function fgsl_sf_airy_bi_deriv_scaled(x, mode)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_airy_bi_deriv_scaled
+    fgsl_sf_airy_bi_deriv_scaled = gsl_sf_airy_bi_deriv_scaled(x, mode%gsl_mode)
+  end function fgsl_sf_airy_bi_deriv_scaled
+  function fgsl_sf_airy_bi_deriv_scaled_e(x, mode, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_airy_bi_deriv_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_airy_bi_deriv_scaled_e = gsl_sf_airy_bi_deriv_scaled_e(x, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_airy_bi_deriv_scaled_e
+  function fgsl_sf_airy_zero_ai(s)
+    integer(fgsl_int), intent(in) :: s
+    real(fgsl_double) :: fgsl_sf_airy_zero_ai
+    fgsl_sf_airy_zero_ai = gsl_sf_airy_zero_ai(s)
+  end function fgsl_sf_airy_zero_ai
+  function fgsl_sf_airy_zero_ai_e (s, result)
+    integer(fgsl_int), intent(in) :: s
+    integer(fgsl_int) :: fgsl_sf_airy_zero_ai_e
+    type(fgsl_sf_result), intent(out) :: result
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_airy_zero_ai_e = gsl_sf_airy_zero_ai_e(s, res)
+    result = res
+  end function fgsl_sf_airy_zero_ai_e
+  function fgsl_sf_airy_zero_bi(s)
+    integer(fgsl_int), intent(in) :: s
+    real(fgsl_double) :: fgsl_sf_airy_zero_bi
+    fgsl_sf_airy_zero_bi = gsl_sf_airy_zero_bi(s)
+  end function fgsl_sf_airy_zero_bi
+  function fgsl_sf_airy_zero_bi_e (s, result)
+    integer(fgsl_int), intent(in) :: s
+    integer(fgsl_int) :: fgsl_sf_airy_zero_bi_e
+    type(fgsl_sf_result), intent(out) :: result
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_airy_zero_bi_e = gsl_sf_airy_zero_bi_e(s, res)
+    result = res
+  end function fgsl_sf_airy_zero_bi_e
+  function fgsl_sf_airy_zero_ai_deriv(s)
+    integer(fgsl_int), intent(in) :: s
+    real(fgsl_double) :: fgsl_sf_airy_zero_ai_deriv
+    fgsl_sf_airy_zero_ai_deriv = gsl_sf_airy_zero_ai_deriv(s)
+  end function fgsl_sf_airy_zero_ai_deriv
+  function fgsl_sf_airy_zero_ai_deriv_e (s, result)
+    integer(fgsl_int), intent(in) :: s
+    integer(fgsl_int) :: fgsl_sf_airy_zero_ai_deriv_e
+    type(fgsl_sf_result), intent(out) :: result
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_airy_zero_ai_deriv_e = gsl_sf_airy_zero_ai_deriv_e(s, res)
+    result = res
+  end function fgsl_sf_airy_zero_ai_deriv_e
+  function fgsl_sf_airy_zero_bi_deriv(s)
+    integer(fgsl_int), intent(in) :: s
+    real(fgsl_double) :: fgsl_sf_airy_zero_bi_deriv
+    fgsl_sf_airy_zero_bi_deriv = gsl_sf_airy_zero_bi_deriv(s)
+  end function fgsl_sf_airy_zero_bi_deriv
+  function fgsl_sf_airy_zero_bi_deriv_e (s, result)
+    integer(fgsl_int), intent(in) :: s
+    integer(fgsl_int) :: fgsl_sf_airy_zero_bi_deriv_e
+    type(fgsl_sf_result), intent(out) :: result
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_airy_zero_bi_deriv_e = gsl_sf_airy_zero_bi_deriv_e(s, res)
+    result = res
+  end function fgsl_sf_airy_zero_bi_deriv_e
+!
+! Bessel functions
+!
+! fgsl_sf_bessel_jc0 --> interface
+  function fgsl_sf_bessel_jc0_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_jc0_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_jc0_e = gsl_sf_bessel_jc0_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_jc0_e
+! fgsl_sf_bessel_jc1 --> interface
+  function fgsl_sf_bessel_jc1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_jc1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_jc1_e = gsl_sf_bessel_jc1_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_jc1_e
+! fgsl_sf_bessel_jc1 --> interface
+  function fgsl_sf_bessel_jcn_e(n, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_jcn_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_jcn_e = gsl_sf_bessel_jcn_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_jcn_e
+! fgsl_sf_bessel_jcn_array --> interface
+! fgsl_sf_bessel_yc0 --> interface
+  function fgsl_sf_bessel_yc0_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_yc0_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_yc0_e = gsl_sf_bessel_yc0_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_yc0_e
+! fgsl_sf_bessel_yc1 --> interface
+  function fgsl_sf_bessel_yc1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_yc1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_yc1_e = gsl_sf_bessel_yc1_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_yc1_e
+!  fgsl_sf_bessel_ycn --> interface
+  function fgsl_sf_bessel_ycn_e(n, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_ycn_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_ycn_e = gsl_sf_bessel_ycn_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_ycn_e
+!  fgsl_sf_bessel_ycn_array --> interface
+!  fgsl_sf_bessel_ic0 --> interface
+  function fgsl_sf_bessel_ic0_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_ic0_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_ic0_e = gsl_sf_bessel_ic0_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_ic0_e
+!  fgsl_sf_bessel_ic1 --> interface
+  function fgsl_sf_bessel_ic1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_ic1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_ic1_e = gsl_sf_bessel_ic1_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_ic1_e
+!  fgsl_sf_bessel_icn --> interface
+  function fgsl_sf_bessel_icn_e(n, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_icn_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_icn_e = gsl_sf_bessel_icn_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_icn_e
+!  fgsl_sf_bessel_icn_array --> interface
+!  fgsl_sf_bessel_ic0_scaled --> interface
+  function fgsl_sf_bessel_ic0_scaled_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_ic0_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_ic0_scaled_e = gsl_sf_bessel_ic0_scaled_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_ic0_scaled_e
+!  fgsl_sf_bessel_ic1_scaled --> interface
+  function fgsl_sf_bessel_ic1_scaled_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_ic1_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_ic1_scaled_e = gsl_sf_bessel_ic1_scaled_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_ic1_scaled_e
+!  fgsl_sf_bessel_icn_scaled --> interface
+  function fgsl_sf_bessel_icn_scaled_e(n, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_icn_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_icn_scaled_e = gsl_sf_bessel_icn_scaled_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_icn_scaled_e
+!  fgsl_sf_bessel_icn_scaled_array --> interface
+!  fgsl_sf_bessel_kc0 --> interface
+  function fgsl_sf_bessel_kc0_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_kc0_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_kc0_e = gsl_sf_bessel_kc0_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_kc0_e
+!  fgsl_sf_bessel_kc1 --> interface
+  function fgsl_sf_bessel_kc1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_kc1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_kc1_e = gsl_sf_bessel_kc1_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_kc1_e
+!  fgsl_sf_bessel_kcn --> interface
+  function fgsl_sf_bessel_kcn_e(n, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_kcn_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_kcn_e = gsl_sf_bessel_kcn_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_kcn_e
+!  fgsl_sf_bessel_kcn_array --> interface
+!  fgsl_sf_bessel_kc0_scaled --> interface
+  function fgsl_sf_bessel_kc0_scaled_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_kc0_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_kc0_scaled_e = gsl_sf_bessel_kc0_scaled_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_kc0_scaled_e
+!  fgsl_sf_bessel_kc1_scaled --> interface
+  function fgsl_sf_bessel_kc1_scaled_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_kc1_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_kc1_scaled_e = gsl_sf_bessel_kc1_scaled_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_kc1_scaled_e
+!  fgsl_sf_bessel_kcn_scaled --> interface
+  function fgsl_sf_bessel_kcn_scaled_e(n, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_kcn_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_kcn_scaled_e = gsl_sf_bessel_kcn_scaled_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_kcn_scaled_e
+!  fgsl_sf_bessel_kcn_scaled_array --> interface
+!
+! spherical bessel functions
+!
+!  fgsl_sf_bessel_js0 --> interface
+  function fgsl_sf_bessel_js0_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_js0_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_js0_e = gsl_sf_bessel_js0_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_js0_e
+!  fgsl_sf_bessel_js1 --> interface
+  function fgsl_sf_bessel_js1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_js1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_js1_e = gsl_sf_bessel_js1_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_js1_e
+!  fgsl_sf_bessel_js2 --> interface
+  function fgsl_sf_bessel_js2_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_js2_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_js2_e = gsl_sf_bessel_js2_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_js2_e
+!   fgsl_sf_bessel_jsl --> interface
+  function fgsl_sf_bessel_jsl_e(n, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_jsl_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_jsl_e = gsl_sf_bessel_jsl_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_jsl_e
+!  fgsl_sf_bessel_jsl_array --> interface
+!  fgsl_sf_bessel_jsl_steed_array --> interface
+!  fgsl_sf_bessel_ys0 --> interface
+  function fgsl_sf_bessel_ys0_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_ys0_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_ys0_e = gsl_sf_bessel_ys0_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_ys0_e
+!  fgsl_sf_bessel_ys1 --> interface
+  function fgsl_sf_bessel_ys1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_ys1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_ys1_e = gsl_sf_bessel_ys1_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_ys1_e
+!  fgsl_sf_bessel_ys2 --> interface
+  function fgsl_sf_bessel_ys2_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_ys2_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_ys2_e = gsl_sf_bessel_ys2_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_ys2_e
+!  fgsl_sf_bessel_ysl --> interface
+  function fgsl_sf_bessel_ysl_e(n, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_ysl_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_ysl_e = gsl_sf_bessel_ysl_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_ysl_e
+!  fgsl_sf_bessel_ysl_array --> interface
+!  fgsl_sf_bessel_is0_scaled --> interface
+  function fgsl_sf_bessel_is0_scaled_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_is0_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_is0_scaled_e = gsl_sf_bessel_is0_scaled_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_is0_scaled_e
+!  fgsl_sf_bessel_is1_scaled --> interface
+  function fgsl_sf_bessel_is1_scaled_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_is1_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_is1_scaled_e = gsl_sf_bessel_is1_scaled_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_is1_scaled_e
+!  fgsl_sf_bessel_is2_scaled --> interface
+  function fgsl_sf_bessel_is2_scaled_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_is2_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_is2_scaled_e = gsl_sf_bessel_is2_scaled_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_is2_scaled_e
+!  fgsl_sf_bessel_isl_scaled --> interface
+  function fgsl_sf_bessel_isl_scaled_e(n, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_isl_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_isl_scaled_e = gsl_sf_bessel_isl_scaled_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_isl_scaled_e
+!  fgsl_sf_bessel_isl_scaled_array --> interface
+!  fgsl_sf_bessel_ks0_scaled(x) --> interface
+  function fgsl_sf_bessel_ks0_scaled_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_ks0_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_ks0_scaled_e = gsl_sf_bessel_ks0_scaled_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_ks0_scaled_e
+!  fgsl_sf_bessel_ks1_scaled --> interface
+  function fgsl_sf_bessel_ks1_scaled_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_ks1_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_ks1_scaled_e = gsl_sf_bessel_ks1_scaled_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_ks1_scaled_e
+! fgsl_sf_bessel_ks2_scaled --> interface
+  function fgsl_sf_bessel_ks2_scaled_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_ks2_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_ks2_scaled_e = gsl_sf_bessel_ks2_scaled_e(x, res)
+    result = res
+  end function fgsl_sf_bessel_ks2_scaled_e
+!  fgsl_sf_bessel_ksl_scaled --> interface
+  function fgsl_sf_bessel_ksl_scaled_e(n, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_ksl_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_ksl_scaled_e = gsl_sf_bessel_ksl_scaled_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_ksl_scaled_e
+!  fgsl_sf_bessel_ksl_scaled_array --> interface
+!
+! fractional order bessel functions
+!
+! fgsl_sf_bessel_jnu --> interface
+  function fgsl_sf_bessel_jnu_e(n, x, result)
+    real(fgsl_double), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_jnu_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_jnu_e = gsl_sf_bessel_jnu_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_jnu_e
+  function fgsl_sf_bessel_sequence_jnu_e(nu, mode, v)
+    real(fgsl_double), intent(in) :: nu
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double), intent(inout), contiguous, target :: v(:)
+    integer(fgsl_int) :: fgsl_sf_bessel_sequence_jnu_e
+    fgsl_sf_bessel_sequence_jnu_e = gsl_sf_bessel_sequence_jnu_e(nu, &
+         mode%gsl_mode, size(v, kind=fgsl_size_t), c_loc(v))
+  end function fgsl_sf_bessel_sequence_jnu_e
+!  fgsl_sf_bessel_ynu --> interface
+  function fgsl_sf_bessel_ynu_e(n, x, result)
+    real(fgsl_double), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_ynu_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_ynu_e = gsl_sf_bessel_ynu_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_ynu_e
+!  fgsl_sf_bessel_inu --> interface
+  function fgsl_sf_bessel_inu_e(n, x, result)
+    real(fgsl_double), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_inu_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_inu_e = gsl_sf_bessel_inu_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_inu_e
+!  fgsl_sf_bessel_inu_scaled --> interface
+  function fgsl_sf_bessel_inu_scaled_e(n, x, result)
+    real(fgsl_double), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_inu_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_inu_scaled_e = gsl_sf_bessel_inu_scaled_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_inu_scaled_e
+!  fgsl_sf_bessel_knu --> interface
+  function fgsl_sf_bessel_knu_e(n, x, result)
+    real(fgsl_double), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_knu_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_knu_e = gsl_sf_bessel_knu_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_knu_e
+!  fgsl_sf_bessel_lnknu --> interface
+  function fgsl_sf_bessel_lnknu_e(n, x, result)
+    real(fgsl_double), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_lnknu_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_lnknu_e = gsl_sf_bessel_lnknu_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_lnknu_e
+!  fgsl_sf_bessel_knu_scaled --> interface
+  function fgsl_sf_bessel_knu_scaled_e(n, x, result)
+    real(fgsl_double), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_knu_scaled_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_knu_scaled_e = gsl_sf_bessel_knu_scaled_e(n, x, res)
+    result = res
+  end function fgsl_sf_bessel_knu_scaled_e
+! fgsl_sf_bessel_zero_jc0 --> interface
+  function fgsl_sf_bessel_zero_jc0_e(s, result)
+    integer(fgsl_int), intent(in) :: s
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_zero_jc0_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_zero_jc0_e = gsl_sf_bessel_zero_jc0_e(s, res)
+    result = res
+  end function fgsl_sf_bessel_zero_jc0_e
+!  fgsl_sf_bessel_zero_jc1 --> interface
+  function fgsl_sf_bessel_zero_jc1_e(s, result)
+    integer(fgsl_int), intent(in) :: s
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_zero_jc1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_zero_jc1_e = gsl_sf_bessel_zero_jc1_e(s, res)
+    result = res
+  end function fgsl_sf_bessel_zero_jc1_e
+!  fgsl_sf_bessel_zero_jnu --> interface
+  function fgsl_sf_bessel_zero_jnu_e(nu, s, result)
+    real(fgsl_double), intent(in) :: nu
+    integer(fgsl_int), intent(in) :: s
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_bessel_zero_jnu_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_bessel_zero_jnu_e = gsl_sf_bessel_zero_jnu_e(nu, s, res)
+    result = res
+  end function fgsl_sf_bessel_zero_jnu_e
+!
+!  fgsl_sf_clausen --> interface
+  function fgsl_sf_clausen_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_clausen_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_clausen_e = gsl_sf_clausen_e(x, res)
+    result = res
+  end function fgsl_sf_clausen_e
+!  fgsl_sf_hydrogenicr_1 --> interface
+  function fgsl_sf_hydrogenicr_1_e(z, r, result)
+    real(fgsl_double), intent(in) :: z, r
+    integer(fgsl_int) :: fgsl_sf_hydrogenicr_1_e
+    type(fgsl_sf_result), intent(out) :: result
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hydrogenicr_1_e = gsl_sf_hydrogenicr_1_e(z, r, res)
+    result = res
+  end function fgsl_sf_hydrogenicr_1_e
+!  fgsl_sf_hydrogenicr --> interface
+  function fgsl_sf_hydrogenicr_e(n, l, z, r, result)
+    integer(fgsl_int), intent(in) :: n, l
+    real(fgsl_double), intent(in) :: z, r
+    integer(fgsl_int) :: fgsl_sf_hydrogenicr_e
+    type(fgsl_sf_result), intent(out) :: result
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hydrogenicr_e = gsl_sf_hydrogenicr_e(n, l, z, r, res)
+    result = res
+  end function fgsl_sf_hydrogenicr_e
+  function fgsl_sf_coulomb_wave_fg_e(eta, x, l_f, k, f, fp, g, gp, exp_f, exp_g)
+    real(fgsl_double), intent(in) :: eta, x, l_f
+    integer(fgsl_int), intent(in) :: k
+    type(fgsl_sf_result), intent(out) :: f, fp, g, gp
+    real(fgsl_double), intent(out) :: exp_f, exp_g
+    integer(fgsl_int) :: fgsl_sf_coulomb_wave_fg_e
+!
+    type(gsl_sf_result) :: fl, fpl, gl, gpl
+    fgsl_sf_coulomb_wave_fg_e = gsl_sf_coulomb_wave_fg_e(eta, x, l_f, k, &
+         fl, fpl, gl, gpl, exp_f, exp_g)
+    f = fl
+    fp = fpl
+    g = gl
+    gp = gpl
+  end function fgsl_sf_coulomb_wave_fg_e
+  function fgsl_sf_coulomb_wave_f_array (l_min, eta, x, fc_array, &
+          f_exponent)
+    real(fgsl_double), intent(in) :: l_min, eta, x
+    real(fgsl_double), intent(inout), contiguous, target :: fc_array(:)
+    real(fgsl_double), intent(out) :: f_exponent
+    integer(fgsl_int) :: fgsl_sf_coulomb_wave_f_array
+    fgsl_sf_coulomb_wave_f_array = gsl_sf_coulomb_wave_f_array (l_min, &
+    size(fc_array, kind=fgsl_int)-1, &
+    eta, x, c_loc(fc_array), f_exponent)
+  end function fgsl_sf_coulomb_wave_f_array
+  function fgsl_sf_coulomb_wave_fg_array(l_min, eta, x, fc_array, &
+          gc_array, f_exponent, g_exponent)
+    real(fgsl_double), intent(in) :: l_min, eta, x
+    real(fgsl_double), intent(out), contiguous, target :: &
+         fc_array(:), gc_array(:)
+    real(fgsl_double), intent(out) :: f_exponent, g_exponent
+    integer(fgsl_int) :: fgsl_sf_coulomb_wave_fg_array
+    if (size(fc_array) /= size(gc_array)) then
+      call fgsl_error('fc_array and gc_array dimensions do not match', __FILE__, __LINE__, fgsl_ebadlen)
+      fgsl_sf_coulomb_wave_fg_array = fgsl_ebadlen
+      return
+    endif
+    fgsl_sf_coulomb_wave_fg_array = gsl_sf_coulomb_wave_fg_array (l_min, &
+    size(fc_array, kind=fgsl_int)-1, &
+    eta, x, c_loc(fc_array), c_loc(gc_array), f_exponent, g_exponent)
+  end function fgsl_sf_coulomb_wave_fg_array
+  function fgsl_sf_coulomb_wave_fgp_array(l_min, eta, x, fc_array, fcp_array, &
+          gc_array, gcp_array, f_exponent, g_exponent)
+    real(fgsl_double), intent(in) :: l_min, eta, x
+    real(fgsl_double), intent(inout), contiguous, target :: fc_array(:), &
+         gc_array(:), fcp_array(:), gcp_array(:)
+    real(fgsl_double), intent(out) :: f_exponent, g_exponent
+    integer(fgsl_int) :: fgsl_sf_coulomb_wave_fgp_array
+    if (size(fc_array) /= size(gc_array) .or.&
+        size(fc_array) /= size(fcp_array) .or.&
+        size(fc_array) /= size(gcp_array)) then
+      call fgsl_error('fc_array, fcp_array, gc_array and gcp_array dimensions do not match',&
+       __FILE__, __LINE__, fgsl_ebadlen)
+      fgsl_sf_coulomb_wave_fgp_array = fgsl_ebadlen
+      return
+    endif
+    fgsl_sf_coulomb_wave_fgp_array = gsl_sf_coulomb_wave_fgp_array (l_min, &
+    size(fc_array, kind=fgsl_int)-1, &
+    eta, x, c_loc(fc_array), c_loc(fcp_array), c_loc(gc_array), c_loc(gcp_array),&
+     f_exponent, g_exponent)
+  end function fgsl_sf_coulomb_wave_fgp_array
+  function fgsl_sf_coulomb_wave_sphf_array(l_min, eta, x, fc_array, &
+          f_exponent)
+    real(fgsl_double), intent(in) :: l_min, eta, x
+    real(fgsl_double), intent(inout), contiguous, target :: fc_array(:)
+    real(fgsl_double), intent(out) :: f_exponent
+    integer(fgsl_int) :: fgsl_sf_coulomb_wave_sphf_array
+    fgsl_sf_coulomb_wave_sphf_array = gsl_sf_coulomb_wave_sphf_array (l_min, &
+    size(fc_array, kind=fgsl_int)-1, &
+    eta, x, c_loc(fc_array), f_exponent)
+  end function fgsl_sf_coulomb_wave_sphf_array
+  function fgsl_sf_coulomb_cl_e(l, eta, result)
+    real(fgsl_double), intent(in) :: eta, l
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_coulomb_cl_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_coulomb_cl_e = gsl_sf_coulomb_cl_e(l, eta, res)
+    result = res
+  end function fgsl_sf_coulomb_cl_e
+  function fgsl_sf_coulomb_cl_array(l_min, eta, cl)
+    real(fgsl_double), intent(in) :: l_min, eta
+    real(fgsl_double), intent(inout), contiguous, target :: cl(:)
+    integer(fgsl_int) :: fgsl_sf_coulomb_cl_array
+    fgsl_sf_coulomb_cl_array = gsl_sf_coulomb_cl_array (l_min, &
+         size(cl, kind=fgsl_int)-1, eta, c_loc(cl))
+  end function fgsl_sf_coulomb_cl_array
+!   fgsl_sf_coupling_3j --> interface
+  function fgsl_sf_coupling_3j_e(two_ja, two_jb, two_jc, two_ma, two_mb, two_mc, result)
+    integer(fgsl_int), intent(in) :: two_ja, two_jb, two_jc, two_ma, two_mb, two_mc
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_coupling_3j_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_coupling_3j_e = gsl_sf_coupling_3j_e(two_ja, two_jb, two_jc, two_ma, &
+         two_mb, two_mc, res)
+    result = res
+  end function fgsl_sf_coupling_3j_e
+!  fgsl_sf_coupling_6j --> interface
+  function fgsl_sf_coupling_6j_e(two_ja, two_jb, two_jc, two_jd, two_je, two_jf, result)
+    integer(fgsl_int), intent(in) :: two_ja, two_jb, two_jc, two_jd, two_je, two_jf
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_coupling_6j_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_coupling_6j_e = gsl_sf_coupling_6j_e(two_ja, two_jb, two_jc, two_jd, &
+         two_je, two_jf, res)
+    result = res
+  end function fgsl_sf_coupling_6j_e
+!  fgsl_sf_coupling_9j --> interface
+  function fgsl_sf_coupling_9j_e(two_ja, two_jb, two_jc, two_jd, two_je, two_jf, &
+          two_jg, two_jh, two_ji, result)
+    integer(fgsl_int), intent(in) :: two_ja, two_jb, two_jc, two_jd, two_je, two_jf, &
+          two_jg, two_jh, two_ji
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_coupling_9j_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_coupling_9j_e = gsl_sf_coupling_9j_e(two_ja, two_jb, two_jc, two_jd, &
+         two_je, two_jf, two_jg, two_jh, two_ji, res)
+    result = res
+  end function fgsl_sf_coupling_9j_e
+!  fgsl_sf_dawson --> interface
+  function fgsl_sf_dawson_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_dawson_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_dawson_e = gsl_sf_dawson_e(x, res)
+    result = res
+  end function fgsl_sf_dawson_e
+!  fgsl_sf_debye_1 --> interface
+  function fgsl_sf_debye_1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_debye_1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_debye_1_e = gsl_sf_debye_1_e(x, res)
+    result = res
+  end function fgsl_sf_debye_1_e
+!  fgsl_sf_debye_2 --> interface
+  function fgsl_sf_debye_2_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_debye_2_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_debye_2_e = gsl_sf_debye_2_e(x, res)
+    result = res
+  end function fgsl_sf_debye_2_e
+!  fgsl_sf_debye_3 --> interface
+  function fgsl_sf_debye_3_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_debye_3_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_debye_3_e = gsl_sf_debye_3_e(x, res)
+    result = res
+  end function fgsl_sf_debye_3_e
+! fgsl_sf_debye_4 --> interface
+  function fgsl_sf_debye_4_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_debye_4_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_debye_4_e = gsl_sf_debye_4_e(x, res)
+    result = res
+  end function fgsl_sf_debye_4_e
+!  fgsl_sf_debye_5 --> interface
+  function fgsl_sf_debye_5_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_debye_5_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_debye_5_e = gsl_sf_debye_5_e(x, res)
+    result = res
+  end function fgsl_sf_debye_5_e
+!  fgsl_sf_debye_6 --> interface
+  function fgsl_sf_debye_6_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_debye_6_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_debye_6_e = gsl_sf_debye_6_e(x, res)
+    result = res
+  end function fgsl_sf_debye_6_e
+!  fgsl_sf_dilog --> interface
+  function fgsl_sf_dilog_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_dilog_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_dilog_e = gsl_sf_dilog_e(x, res)
+    result = res
+  end function fgsl_sf_dilog_e
+  function fgsl_sf_complex_dilog_e(r, theta, result_re, result_im)
+    real(fgsl_double), intent(in) :: r, theta
+    type(fgsl_sf_result), intent(out) :: result_re, result_im
+    integer(fgsl_int) :: fgsl_sf_complex_dilog_e
+!
+    type(gsl_sf_result) :: res_re, res_im
+    fgsl_sf_complex_dilog_e = gsl_sf_complex_dilog_e(r, theta, res_re, res_im)
+    result_re = res_re
+    result_im = res_im
+  end function fgsl_sf_complex_dilog_e
+  function fgsl_sf_multiply_e(x, y, result)
+    real(fgsl_double), intent(in) :: x, y
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_multiply_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_multiply_e = gsl_sf_multiply_e(x, y, res)
+    result = res
+  end function fgsl_sf_multiply_e
+  function fgsl_sf_multiply_err_e(x, dx, y, dy, result)
+    real(fgsl_double), intent(in) :: x, y, dx, dy
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_multiply_err_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_multiply_err_e = gsl_sf_multiply_err_e(x, dx, y, dy, res)
+    result = res
+  end function fgsl_sf_multiply_err_e
+  function fgsl_sf_ellint_kcomp(k, mode)
+    real(fgsl_double), intent(in) :: k
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_ellint_kcomp
+    fgsl_sf_ellint_kcomp = gsl_sf_ellint_kcomp(k, mode%gsl_mode)
+  end function fgsl_sf_ellint_kcomp
+  function fgsl_sf_ellint_kcomp_e(k, mode, result)
+    real(fgsl_double), intent(in) :: k
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_ellint_kcomp_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_ellint_kcomp_e = gsl_sf_ellint_kcomp_e(k, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_ellint_kcomp_e
+  function fgsl_sf_ellint_ecomp(k, mode)
+    real(fgsl_double), intent(in) :: k
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_ellint_ecomp
+    fgsl_sf_ellint_ecomp = gsl_sf_ellint_ecomp(k, mode%gsl_mode)
+  end function fgsl_sf_ellint_ecomp
+  function fgsl_sf_ellint_ecomp_e(k, mode, result)
+    real(fgsl_double), intent(in) :: k
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_ellint_ecomp_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_ellint_ecomp_e = gsl_sf_ellint_ecomp_e(k, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_ellint_ecomp_e
+  function fgsl_sf_ellint_pcomp(k, n, mode)
+    real(fgsl_double), intent(in) :: k, n
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_ellint_pcomp
+    fgsl_sf_ellint_pcomp = gsl_sf_ellint_pcomp(k, n, mode%gsl_mode)
+  end function fgsl_sf_ellint_pcomp
+  function fgsl_sf_ellint_pcomp_e(k, n, mode, result)
+    real(fgsl_double), intent(in) :: k, n
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_ellint_pcomp_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_ellint_pcomp_e = gsl_sf_ellint_pcomp_e(k, n, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_ellint_pcomp_e
+  function fgsl_sf_ellint_f(phi, k, mode)
+    real(fgsl_double), intent(in) :: phi, k
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_ellint_f
+    fgsl_sf_ellint_f = gsl_sf_ellint_f(phi, k, mode%gsl_mode)
+  end function fgsl_sf_ellint_f
+  function fgsl_sf_ellint_f_e(phi, k, mode, result)
+    real(fgsl_double), intent(in) :: phi, k
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_ellint_f_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_ellint_f_e = gsl_sf_ellint_f_e(phi, k, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_ellint_f_e
+  function fgsl_sf_ellint_e(phi, k, mode)
+    real(fgsl_double), intent(in) :: phi, k
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_ellint_e
+    fgsl_sf_ellint_e = gsl_sf_ellint_e(phi, k, mode%gsl_mode)
+  end function fgsl_sf_ellint_e
+  function fgsl_sf_ellint_e_e(phi, k, mode, result)
+    real(fgsl_double), intent(in) :: phi, k
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_ellint_e_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_ellint_e_e = gsl_sf_ellint_e_e(phi, k, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_ellint_e_e
+  function fgsl_sf_ellint_p(phi, k, n, mode)
+    real(fgsl_double), intent(in) :: phi, k, n
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_ellint_p
+    fgsl_sf_ellint_p = gsl_sf_ellint_p(phi, k, n, mode%gsl_mode)
+  end function fgsl_sf_ellint_p
+  function fgsl_sf_ellint_p_e(phi, k, n, mode, result)
+    real(fgsl_double), intent(in) :: phi, k, n
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_ellint_p_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_ellint_p_e = gsl_sf_ellint_p_e(phi, k, n, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_ellint_p_e
+  function fgsl_sf_ellint_d(phi, k, mode)
+    real(fgsl_double), intent(in) :: phi, k
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_ellint_d
+    fgsl_sf_ellint_d = gsl_sf_ellint_d(phi, k, mode%gsl_mode)
+  end function fgsl_sf_ellint_d
+  function fgsl_sf_ellint_d_e(phi, k, mode, result)
+    real(fgsl_double), intent(in) :: phi, k
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_ellint_d_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_ellint_d_e = gsl_sf_ellint_d_e(phi, k, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_ellint_d_e
+  function fgsl_sf_ellint_rc(x, y, mode)
+    real(fgsl_double), intent(in) :: x, y
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_ellint_rc
+    fgsl_sf_ellint_rc = gsl_sf_ellint_rc(x, y, mode%gsl_mode)
+  end function fgsl_sf_ellint_rc
+  function fgsl_sf_ellint_rc_e(x, y, mode, result)
+    real(fgsl_double), intent(in) :: x, y
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_ellint_rc_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_ellint_rc_e = gsl_sf_ellint_rc_e(x, y, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_ellint_rc_e
+  function fgsl_sf_ellint_rd(x, y, z, mode)
+    real(fgsl_double), intent(in) :: x, y, z
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_ellint_rd
+    fgsl_sf_ellint_rd = gsl_sf_ellint_rd(x, y, z, mode%gsl_mode)
+  end function fgsl_sf_ellint_rd
+  function fgsl_sf_ellint_rd_e(x, y, z, mode, result)
+    real(fgsl_double), intent(in) :: x, y, z
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_ellint_rd_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_ellint_rd_e = gsl_sf_ellint_rd_e(x, y, z, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_ellint_rd_e
+  function fgsl_sf_ellint_rf(x, y, z, mode)
+    real(fgsl_double), intent(in) :: x, y, z
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_ellint_rf
+    fgsl_sf_ellint_rf = gsl_sf_ellint_rf(x, y, z, mode%gsl_mode)
+  end function fgsl_sf_ellint_rf
+  function fgsl_sf_ellint_rf_e(x, y, z, mode, result)
+    real(fgsl_double), intent(in) :: x, y, z
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_ellint_rf_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_ellint_rf_e = gsl_sf_ellint_rf_e(x, y, z, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_ellint_rf_e
+  function fgsl_sf_ellint_rj(x, y, z, p, mode)
+    real(fgsl_double), intent(in) :: x, y, z, p
+    type(fgsl_mode_t), intent(in) :: mode
+    real(fgsl_double) :: fgsl_sf_ellint_rj
+    fgsl_sf_ellint_rj = gsl_sf_ellint_rj(x, y, z, p, mode%gsl_mode)
+  end function fgsl_sf_ellint_rj
+  function fgsl_sf_ellint_rj_e(x, y, z, p, mode, result)
+    real(fgsl_double), intent(in) :: x, y, z, p
+    type(fgsl_mode_t), intent(in) :: mode
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_ellint_rj_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_ellint_rj_e = gsl_sf_ellint_rj_e(x, y, z, p, mode%gsl_mode, res)
+    result = res
+  end function fgsl_sf_ellint_rj_e
+!  fgsl_sf_elljac_e --> interface
+!  fgsl_sf_erf --> interface
+  function fgsl_sf_erf_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_erf_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_erf_e = gsl_sf_erf_e(x, res)
+    result = res
+  end function fgsl_sf_erf_e
+!  fgsl_sf_erfc --> interface
+  function fgsl_sf_erfc_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_erfc_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_erfc_e = gsl_sf_erfc_e(x, res)
+    result = res
+  end function fgsl_sf_erfc_e
+!  fgsl_sf_log_erfc --> interface
+  function fgsl_sf_log_erfc_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_log_erfc_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_log_erfc_e = gsl_sf_log_erfc_e(x, res)
+    result = res
+  end function fgsl_sf_log_erfc_e
+!  fgsl_sf_erf_z --> interface
+  function fgsl_sf_erf_z_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_erf_z_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_erf_z_e = gsl_sf_erf_z_e(x, res)
+    result = res
+  end function fgsl_sf_erf_z_e
+!  fgsl_sf_erf_q --> interface
+  function fgsl_sf_erf_q_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_erf_q_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_erf_q_e = gsl_sf_erf_q_e(x, res)
+    result = res
+  end function fgsl_sf_erf_q_e
+!  fgsl_sf_hazard --> interface
+  function fgsl_sf_hazard_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hazard_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hazard_e = gsl_sf_hazard_e(x, res)
+    result = res
+  end function fgsl_sf_hazard_e
+!  fgsl_sf_exp --> interface
+  function fgsl_sf_exp_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_exp_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_exp_e = gsl_sf_exp_e(x, res)
+    result = res
+  end function fgsl_sf_exp_e
+  function fgsl_sf_exp_e10_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result_e10), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_exp_e10_e
+!
+    type(gsl_sf_result_e10) :: res
+    fgsl_sf_exp_e10_e = gsl_sf_exp_e10_e(x, res)
+    result = res
+  end function fgsl_sf_exp_e10_e
+!  fgsl_sf_exp_mult --> interface
+  function fgsl_sf_exp_mult_e(x, y, result)
+    real(fgsl_double), intent(in) :: x, y
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_exp_mult_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_exp_mult_e = gsl_sf_exp_mult_e(x, y, res)
+    result = res
+  end function fgsl_sf_exp_mult_e
+  function fgsl_sf_exp_mult_e10_e(x, y, result)
+    real(fgsl_double), intent(in) :: x, y
+    type(fgsl_sf_result_e10), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_exp_mult_e10_e
+!
+    type(gsl_sf_result_e10) :: res
+    fgsl_sf_exp_mult_e10_e = gsl_sf_exp_mult_e10_e(x, y, res)
+    result = res
+  end function fgsl_sf_exp_mult_e10_e
+!  fgsl_sf_expm1 --> interface
+  function fgsl_sf_expm1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_expm1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_expm1_e = gsl_sf_expm1_e(x, res)
+    result = res
+  end function fgsl_sf_expm1_e
+!  fgsl_sf_exprel --> interface
+  function fgsl_sf_exprel_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_exprel_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_exprel_e = gsl_sf_exprel_e(x, res)
+    result = res
+  end function fgsl_sf_exprel_e
+!  fgsl_sf_exprel_2 --> interface
+  function fgsl_sf_exprel_2_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_exprel_2_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_exprel_2_e = gsl_sf_exprel_2_e(x, res)
+    result = res
+  end function fgsl_sf_exprel_2_e
+!  fgsl_sf_exprel_n --> interface
+  function fgsl_sf_exprel_n_e(n, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_exprel_n_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_exprel_n_e = gsl_sf_exprel_n_e(n, x, res)
+    result = res
+  end function fgsl_sf_exprel_n_e
+  function fgsl_sf_exp_err_e(x, dx, result)
+    real(fgsl_double), intent(in) :: x, dx
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_exp_err_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_exp_err_e = gsl_sf_exp_err_e(x, dx, res)
+    result = res
+  end function fgsl_sf_exp_err_e
+  function fgsl_sf_exp_err_e10_e(x, dx, result)
+    real(fgsl_double), intent(in) :: x, dx
+    type(fgsl_sf_result_e10), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_exp_err_e10_e
+!
+    type(gsl_sf_result_e10) :: res
+    fgsl_sf_exp_err_e10_e = gsl_sf_exp_err_e10_e(x, dx, res)
+    result = res
+  end function fgsl_sf_exp_err_e10_e
+  function fgsl_sf_exp_mult_err_e(x, dx, y, dy, result)
+    real(fgsl_double), intent(in) :: x, dx, y, dy
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_exp_mult_err_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_exp_mult_err_e = gsl_sf_exp_mult_err_e(x, dx, y, dy, res)
+    result = res
+  end function fgsl_sf_exp_mult_err_e
+  function fgsl_sf_exp_mult_err_e10_e(x, dx, y, dy, result)
+    real(fgsl_double), intent(in) :: x, dx, y, dy
+    type(fgsl_sf_result_e10), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_exp_mult_err_e10_e
+!
+    type(gsl_sf_result_e10) :: res
+    fgsl_sf_exp_mult_err_e10_e = gsl_sf_exp_mult_err_e10_e(x, dx, y, dy, res)
+    result = res
+  end function fgsl_sf_exp_mult_err_e10_e
+!  fgsl_sf_expint_e1 --> interface
+  function fgsl_sf_expint_e1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_expint_e1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_expint_e1_e = gsl_sf_expint_e1_e(x, res)
+    result = res
+  end function fgsl_sf_expint_e1_e
+!  fgsl_sf_expint_e2 --> interface
+  function fgsl_sf_expint_e2_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_expint_e2_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_expint_e2_e = gsl_sf_expint_e2_e(x, res)
+    result = res
+  end function fgsl_sf_expint_e2_e
+!  fgsl_sf_expint_en --> interface
+  function fgsl_sf_expint_en_e(n, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_expint_en_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_expint_en_e = gsl_sf_expint_en_e(n, x, res)
+    result = res
+  end function fgsl_sf_expint_en_e
+!  fgsl_sf_expint_ei --> interface
+  function fgsl_sf_expint_ei_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_expint_ei_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_expint_ei_e = gsl_sf_expint_ei_e(x, res)
+    result = res
+  end function fgsl_sf_expint_ei_e
+!  fgsl_sf_shi --> interface
+  function fgsl_sf_shi_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_shi_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_shi_e = gsl_sf_shi_e(x, res)
+    result = res
+  end function fgsl_sf_shi_e
+!  fgsl_sf_chi --> interface
+  function fgsl_sf_chi_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_chi_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_chi_e = gsl_sf_chi_e(x, res)
+    result = res
+  end function fgsl_sf_chi_e
+!  fgsl_sf_expint_3 --> interface
+  function fgsl_sf_expint_3_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_expint_3_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_expint_3_e = gsl_sf_expint_3_e(x, res)
+    result = res
+  end function fgsl_sf_expint_3_e
+!  fgsl_sf_si --> interface
+  function fgsl_sf_si_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_si_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_si_e = gsl_sf_si_e(x, res)
+    result = res
+  end function fgsl_sf_si_e
+!  fgsl_sf_ci --> interface
+  function fgsl_sf_ci_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_ci_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_ci_e = gsl_sf_ci_e(x, res)
+    result = res
+  end function fgsl_sf_ci_e
+!  fgsl_sf_atanint --> interface
+  function fgsl_sf_atanint_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_atanint_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_atanint_e = gsl_sf_atanint_e(x, res)
+    result = res
+  end function fgsl_sf_atanint_e
+!  fgsl_sf_fermi_dirac_m1 --> interface
+  function fgsl_sf_fermi_dirac_m1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_fermi_dirac_m1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_fermi_dirac_m1_e = gsl_sf_fermi_dirac_m1_e(x, res)
+    result = res
+  end function fgsl_sf_fermi_dirac_m1_e
+!  fgsl_sf_fermi_dirac_0 --> interface
+  function fgsl_sf_fermi_dirac_0_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_fermi_dirac_0_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_fermi_dirac_0_e = gsl_sf_fermi_dirac_0_e(x, res)
+    result = res
+  end function fgsl_sf_fermi_dirac_0_e
+!  fgsl_sf_fermi_dirac_1 --> interface
+  function fgsl_sf_fermi_dirac_1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_fermi_dirac_1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_fermi_dirac_1_e = gsl_sf_fermi_dirac_1_e(x, res)
+    result = res
+  end function fgsl_sf_fermi_dirac_1_e
+!  fgsl_sf_fermi_dirac_2 --> interface
+  function fgsl_sf_fermi_dirac_2_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_fermi_dirac_2_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_fermi_dirac_2_e = gsl_sf_fermi_dirac_2_e(x, res)
+    result = res
+  end function fgsl_sf_fermi_dirac_2_e
+!  fgsl_sf_fermi_dirac_int --> interface
+  function fgsl_sf_fermi_dirac_int_e(i, x, result)
+    integer(fgsl_int), intent(in) :: i
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_fermi_dirac_int_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_fermi_dirac_int_e = gsl_sf_fermi_dirac_int_e(i, x, res)
+    result = res
+  end function fgsl_sf_fermi_dirac_int_e
+!  fgsl_sf_fermi_dirac_mhalf --> interface
+  function fgsl_sf_fermi_dirac_mhalf_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_fermi_dirac_mhalf_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_fermi_dirac_mhalf_e = gsl_sf_fermi_dirac_mhalf_e(x, res)
+    result = res
+  end function fgsl_sf_fermi_dirac_mhalf_e
+!  fgsl_sf_fermi_dirac_half --> interface
+  function fgsl_sf_fermi_dirac_half_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_fermi_dirac_half_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_fermi_dirac_half_e = gsl_sf_fermi_dirac_half_e(x, res)
+    result = res
+  end function fgsl_sf_fermi_dirac_half_e
+!  fgsl_sf_fermi_dirac_3half --> interface
+  function fgsl_sf_fermi_dirac_3half_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_fermi_dirac_3half_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_fermi_dirac_3half_e = gsl_sf_fermi_dirac_3half_e(x, res)
+    result = res
+  end function fgsl_sf_fermi_dirac_3half_e
+!  fgsl_sf_fermi_dirac_inc_0 --> interface
+  function fgsl_sf_fermi_dirac_inc_0_e(x, b, result)
+    real(fgsl_double), intent(in) :: x, b
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_fermi_dirac_inc_0_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_fermi_dirac_inc_0_e = gsl_sf_fermi_dirac_inc_0_e(x, b, res)
+    result = res
+  end function fgsl_sf_fermi_dirac_inc_0_e
+!  fgsl_sf_gamma --> interface
+  function fgsl_sf_gamma_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_gamma_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_gamma_e = gsl_sf_gamma_e(x, res)
+    result = res
+  end function fgsl_sf_gamma_e
+!  fgsl_sf_lngamma --> interface
+  function fgsl_sf_lngamma_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_lngamma_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_lngamma_e = gsl_sf_lngamma_e(x, res)
+    result = res
+  end function fgsl_sf_lngamma_e
+  function fgsl_sf_lngamma_sgn_e(x, result_lg, sgn)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result_lg
+    real(fgsl_double), intent(out) :: sgn
+    integer(fgsl_int) :: fgsl_sf_lngamma_sgn_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_lngamma_sgn_e = gsl_sf_lngamma_sgn_e(x, res, sgn)
+    result_lg = res
+  end function fgsl_sf_lngamma_sgn_e
+!  fgsl_sf_gammastar --> interface
+  function fgsl_sf_gammastar_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_gammastar_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_gammastar_e = gsl_sf_gammastar_e(x, res)
+    result = res
+  end function fgsl_sf_gammastar_e
+!  fgsl_sf_gammainv --> interface
+  function fgsl_sf_gammainv_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_gammainv_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_gammainv_e = gsl_sf_gammainv_e(x, res)
+    result = res
+  end function fgsl_sf_gammainv_e
+  function fgsl_sf_lngamma_complex_e(zr, zi, lnr, arg)
+    real(fgsl_double), intent(in) :: zr, zi
+    type(fgsl_sf_result), intent(out) :: lnr, arg
+    integer(fgsl_int) :: fgsl_sf_lngamma_complex_e
+!
+    type(gsl_sf_result) :: lnr_loc, arg_loc
+    fgsl_sf_lngamma_complex_e = gsl_sf_lngamma_complex_e(zr, zi, lnr_loc, arg_loc)
+    lnr = lnr_loc
+    arg = arg_loc
+  end function fgsl_sf_lngamma_complex_e
+!  fgsl_sf_fact --> interface
+  function fgsl_sf_fact_e(n, result)
+    integer(c_int), intent(in) :: n
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_fact_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_fact_e = gsl_sf_fact_e(n, res)
+    result = res
+  end function fgsl_sf_fact_e
+!  fgsl_sf_doublefact --> interface
+  function fgsl_sf_doublefact_e(n, result)
+    integer(c_int), intent(in) :: n
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_doublefact_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_doublefact_e = gsl_sf_doublefact_e(n, res)
+    result = res
+  end function fgsl_sf_doublefact_e
+!  fgsl_sf_lnfact --> interface
+  function fgsl_sf_lnfact_e(n, result)
+    integer(c_int), intent(in) :: n
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_lnfact_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_lnfact_e = gsl_sf_lnfact_e(n, res)
+    result = res
+  end function fgsl_sf_lnfact_e
+!  fgsl_sf_lndoublefact --> interface
+  function fgsl_sf_lndoublefact_e(n, result)
+    integer(c_int), intent(in) :: n
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_lndoublefact_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_lndoublefact_e = gsl_sf_lndoublefact_e(n, res)
+    result = res
+  end function fgsl_sf_lndoublefact_e
+!  fgsl_sf_choose --> interface
+  function fgsl_sf_choose_e(n, m, result)
+    integer(c_int), intent(in) :: n, m
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_choose_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_choose_e = gsl_sf_choose_e(n, m, res)
+    result = res
+  end function fgsl_sf_choose_e
+!  fgsl_sf_lnchoose --> interface
+  function fgsl_sf_lnchoose_e(n, m, result)
+    integer(c_int), intent(in) :: n, m
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_lnchoose_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_lnchoose_e = gsl_sf_lnchoose_e(n, m, res)
+    result = res
+  end function fgsl_sf_lnchoose_e
+!  fgsl_sf_taylorcoeff --> interface
+  function fgsl_sf_taylorcoeff_e(n, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_taylorcoeff_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_taylorcoeff_e = gsl_sf_taylorcoeff_e(n, x, res)
+    result = res
+  end function fgsl_sf_taylorcoeff_e
+!  fgsl_sf_poch --> interface
+  function fgsl_sf_poch_e(a, x, result)
+    real(fgsl_double), intent(in) :: a, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_poch_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_poch_e = gsl_sf_poch_e(a, x, res)
+    result = res
+  end function fgsl_sf_poch_e
+!  fgsl_sf_lnpoch --> interface
+  function fgsl_sf_lnpoch_e(a, x, result)
+    real(fgsl_double), intent(in) :: a, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_lnpoch_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_lnpoch_e = gsl_sf_lnpoch_e(a, x, res)
+    result = res
+  end function fgsl_sf_lnpoch_e
+  function fgsl_sf_lnpoch_sgn_e(a, x, result_lg, sgn)
+    real(fgsl_double), intent(in) :: a, x
+    type(fgsl_sf_result), intent(out) :: result_lg
+    real(fgsl_double), intent(out) :: sgn
+    integer(fgsl_int) :: fgsl_sf_lnpoch_sgn_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_lnpoch_sgn_e = gsl_sf_lnpoch_sgn_e(a, x, res, sgn)
+    result_lg = res
+  end function fgsl_sf_lnpoch_sgn_e
+!  fgsl_sf_pochrel --> interface
+  function fgsl_sf_pochrel_e(a, x, result)
+    real(fgsl_double), intent(in) :: a, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_pochrel_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_pochrel_e = gsl_sf_pochrel_e(a, x, res)
+    result = res
+  end function fgsl_sf_pochrel_e
+!  fgsl_sf_gamma_inc --> interface
+  function fgsl_sf_gamma_inc_e(a, x, result)
+    real(fgsl_double), intent(in) :: a, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_gamma_inc_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_gamma_inc_e = gsl_sf_gamma_inc_e(a, x, res)
+    result = res
+  end function fgsl_sf_gamma_inc_e
+!  fgsl_sf_gamma_inc_q --> interface
+  function fgsl_sf_gamma_inc_q_e(a, x, result)
+    real(fgsl_double), intent(in) :: a, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_gamma_inc_q_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_gamma_inc_q_e = gsl_sf_gamma_inc_q_e(a, x, res)
+    result = res
+  end function fgsl_sf_gamma_inc_q_e
+!  fgsl_sf_gamma_inc_p --> interface
+  function fgsl_sf_gamma_inc_p_e(a, x, result)
+    real(fgsl_double), intent(in) :: a, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_gamma_inc_p_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_gamma_inc_p_e = gsl_sf_gamma_inc_p_e(a, x, res)
+    result = res
+  end function fgsl_sf_gamma_inc_p_e
+!  fgsl_sf_beta --> interface
+  function fgsl_sf_beta_e(a, b, result)
+    real(fgsl_double), intent(in) :: a, b
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_beta_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_beta_e = gsl_sf_beta_e(a, b, res)
+    result = res
+  end function fgsl_sf_beta_e
+!  fgsl_sf_lnbeta --> interface
+  function fgsl_sf_lnbeta_e(a, b, result)
+    real(fgsl_double), intent(in) :: a, b
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_lnbeta_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_lnbeta_e = gsl_sf_lnbeta_e(a, b, res)
+    result = res
+  end function fgsl_sf_lnbeta_e
+!  fgsl_sf_beta_inc --> interface
+  function fgsl_sf_beta_inc_e(a, b, x, result)
+    real(fgsl_double), intent(in) :: a, b, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_beta_inc_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_beta_inc_e = gsl_sf_beta_inc_e(a, b, x, res)
+    result = res
+  end function fgsl_sf_beta_inc_e
+!  fgsl_sf_gegenpoly_1 --> interface
+  function fgsl_sf_gegenpoly_1_e(lambda, x, result)
+    real(fgsl_double), intent(in) :: lambda, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_gegenpoly_1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_gegenpoly_1_e = gsl_sf_gegenpoly_1_e(lambda, x, res)
+    result = res
+  end function fgsl_sf_gegenpoly_1_e
+!  fgsl_sf_gegenpoly_2 --> interface
+  function fgsl_sf_gegenpoly_2_e(lambda, x, result)
+    real(fgsl_double), intent(in) :: lambda, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_gegenpoly_2_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_gegenpoly_2_e = gsl_sf_gegenpoly_2_e(lambda, x, res)
+    result = res
+  end function fgsl_sf_gegenpoly_2_e
+!  fgsl_sf_gegenpoly_3 --> interface
+  function fgsl_sf_gegenpoly_3_e(lambda, x, result)
+    real(fgsl_double), intent(in) :: lambda, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_gegenpoly_3_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_gegenpoly_3_e = gsl_sf_gegenpoly_3_e(lambda, x, res)
+    result = res
+  end function fgsl_sf_gegenpoly_3_e
+!  fgsl_sf_gegenpoly_n --> interface
+  function fgsl_sf_gegenpoly_n_e(n, lambda, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: lambda, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_gegenpoly_n_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_gegenpoly_n_e = gsl_sf_gegenpoly_n_e(n, lambda, x, res)
+    result = res
+  end function fgsl_sf_gegenpoly_n_e
+  function fgsl_sf_gegenpoly_array(lambda, x, result_array)
+    real(fgsl_double), intent(in) :: lambda, x
+    real(fgsl_double), intent(inout), contiguous, target :: result_array(:)
+    integer(fgsl_int) :: fgsl_sf_gegenpoly_array
+    fgsl_sf_gegenpoly_array = gsl_sf_gegenpoly_array( &
+         size(result_array, kind=fgsl_int)-1,&
+         lambda, x, c_loc(result_array))
+  end function fgsl_sf_gegenpoly_array
+! hermite
+  function fgsl_sf_hermite_deriv_e(m, n, x, result) 
+    integer(fgsl_int), intent(in) :: m, n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hermite_deriv_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hermite_deriv_e = gsl_sf_hermite_deriv_e(m, n, x, res)
+    result = res
+  end function fgsl_sf_hermite_deriv_e
+  function fgsl_sf_hermite_prob_e(n, x, result) 
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hermite_prob_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hermite_prob_e = gsl_sf_hermite_prob_e(n, x, res)
+    result = res
+  end function fgsl_sf_hermite_prob_e
+  function fgsl_sf_hermite_prob_deriv_e(m, n, x, result) 
+    integer(fgsl_int), intent(in) :: m, n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hermite_prob_deriv_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hermite_prob_deriv_e = gsl_sf_hermite_prob_deriv_e(m, n, x, res)
+    result = res
+  end function fgsl_sf_hermite_prob_deriv_e
+  function fgsl_sf_hermite_prob_series_e(n, x, a, result) 
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    real(fgsl_double), dimension(*), intent(in) :: a
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hermite_prob_series_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hermite_prob_series_e = gsl_sf_hermite_prob_series_e(n, x, a, res)
+    result = res
+  end function fgsl_sf_hermite_prob_series_e
+  function fgsl_sf_hermite_phys_e(n, x, result) 
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hermite_phys_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hermite_phys_e = gsl_sf_hermite_phys_e(n, x, res)
+    result = res
+  end function fgsl_sf_hermite_phys_e
+  function fgsl_sf_hermite_e(n, x, result) 
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hermite_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hermite_e = gsl_sf_hermite_e(n, x, res)
+    result = res
+  end function fgsl_sf_hermite_e
+  function fgsl_sf_hermite_zero_e(n, s, result) 
+    integer(fgsl_int), intent(in) :: n, s
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hermite_zero_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hermite_zero_e = gsl_sf_hermite_zero_e(n, s, res)
+    result = res
+  end function fgsl_sf_hermite_zero_e
+  function fgsl_sf_hermite_prob_zero_e(n, s, result) 
+    integer(fgsl_int), intent(in) :: n, s
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hermite_prob_zero_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hermite_prob_zero_e = gsl_sf_hermite_prob_zero_e(n, s, res)
+    result = res
+  end function fgsl_sf_hermite_prob_zero_e
+  
+  function fgsl_sf_hermite_phys_series_e(n, x, a, result) 
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    real(fgsl_double), dimension(*), intent(in) :: a
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hermite_phys_series_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hermite_phys_series_e = gsl_sf_hermite_phys_series_e(n, x, a, res)
+    result = res
+  end function fgsl_sf_hermite_phys_series_e
+  function fgsl_sf_hermite_series_e(n, x, a, result) 
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    real(fgsl_double), dimension(*), intent(in) :: a
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hermite_series_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hermite_series_e = gsl_sf_hermite_series_e(n, x, a, res)
+    result = res
+  end function fgsl_sf_hermite_series_e
+  function fgsl_sf_hermite_func_e(n, x, result) 
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hermite_func_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hermite_func_e = gsl_sf_hermite_func_e(n, x, res)
+    result = res
+  end function fgsl_sf_hermite_func_e
+  function fgsl_sf_hermite_func_fast_e(n, x, result) 
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hermite_func_fast_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hermite_func_fast_e = gsl_sf_hermite_func_fast_e(n, x, res)
+    result = res
+  end function fgsl_sf_hermite_func_fast_e
+  function fgsl_sf_hermite_func_series_e(n, x, a, result) 
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: x
+    real(fgsl_double), dimension(*), intent(in) :: a
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hermite_func_series_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hermite_func_series_e = gsl_sf_hermite_func_series_e(n, x, a, res)
+    result = res
+  end function fgsl_sf_hermite_func_series_e
+
+! hypergeometric
+!  fgsl_sf_hyperg_0f1 --> interface
+  function fgsl_sf_hyperg_0f1_e(c, x, result)
+    real(fgsl_double), intent(in) :: c, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hyperg_0f1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hyperg_0f1_e = gsl_sf_hyperg_0f1_e(c, x, res)
+    result = res
+  end function fgsl_sf_hyperg_0f1_e
+!  fgsl_sf_hyperg_1f1_int --> interface
+  function fgsl_sf_hyperg_1f1_int_e(m, n, x, result)
+    integer(fgsl_int), intent(in) :: m, n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hyperg_1f1_int_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hyperg_1f1_int_e = gsl_sf_hyperg_1f1_int_e(m, n, x, res)
+    result = res
+  end function fgsl_sf_hyperg_1f1_int_e
+!  fgsl_sf_hyperg_1f1 --> interface
+  function fgsl_sf_hyperg_1f1_e(a, b, x, result)
+    real(fgsl_double), intent(in) :: a, b, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hyperg_1f1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hyperg_1f1_e = gsl_sf_hyperg_1f1_e(a, b, x, res)
+    result = res
+  end function fgsl_sf_hyperg_1f1_e
+!  fgsl_sf_hyperg_u_int --> interface
+  function fgsl_sf_hyperg_u_int_e(m, n, x, result)
+    integer(fgsl_int), intent(in) :: m, n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hyperg_u_int_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hyperg_u_int_e = gsl_sf_hyperg_u_int_e(m, n, x, res)
+    result = res
+  end function fgsl_sf_hyperg_u_int_e
+  function fgsl_sf_hyperg_u_int_e10_e(m, n, x, result)
+    integer(fgsl_int), intent(in) :: m, n
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result_e10), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hyperg_u_int_e10_e
+!
+    type(gsl_sf_result_e10) :: res
+    fgsl_sf_hyperg_u_int_e10_e = gsl_sf_hyperg_u_int_e10_e(m, n, x, res)
+    result = res
+  end function fgsl_sf_hyperg_u_int_e10_e
+!  fgsl_sf_hyperg_u --> interface
+  function fgsl_sf_hyperg_u_e(a, b, x, result)
+    real(fgsl_double), intent(in) :: a, b, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hyperg_u_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hyperg_u_e = gsl_sf_hyperg_u_e(a, b, x, res)
+    result = res
+  end function fgsl_sf_hyperg_u_e
+  function fgsl_sf_hyperg_u_e10_e(a, b, x, result)
+    real(fgsl_double), intent(in) :: a, b, x
+    type(fgsl_sf_result_e10), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hyperg_u_e10_e
+!
+    type(gsl_sf_result_e10) :: res
+    fgsl_sf_hyperg_u_e10_e = gsl_sf_hyperg_u_e10_e(a, b, x, res)
+    result = res
+  end function fgsl_sf_hyperg_u_e10_e
+!  fgsl_sf_hyperg_2f1 --> interface
+  function fgsl_sf_hyperg_2f1_e(a, b, c, x, result)
+    real(fgsl_double), intent(in) :: a, b, c, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hyperg_2f1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hyperg_2f1_e = gsl_sf_hyperg_2f1_e(a, b, c, x, res)
+    result = res
+  end function fgsl_sf_hyperg_2f1_e
+!  fgsl_sf_hyperg_2f1_conj --> interface
+  function fgsl_sf_hyperg_2f1_conj_e(ar, ai, c, x, result)
+    real(fgsl_double), intent(in) :: ar, ai, c, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hyperg_2f1_conj_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hyperg_2f1_conj_e = gsl_sf_hyperg_2f1_conj_e(ar, ai, c, x, res)
+    result = res
+  end function fgsl_sf_hyperg_2f1_conj_e
+!  fgsl_sf_hyperg_2f1_renorm --> interface
+  function fgsl_sf_hyperg_2f1_renorm_e(a, b, c, x, result)
+    real(fgsl_double), intent(in) :: a, b, c, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hyperg_2f1_renorm_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hyperg_2f1_renorm_e = gsl_sf_hyperg_2f1_renorm_e(a, b, c, x, res)
+    result = res
+  end function fgsl_sf_hyperg_2f1_renorm_e
+!  fgsl_sf_hyperg_2f1_conj_renorm --> interface
+  function fgsl_sf_hyperg_2f1_conj_renorm_e(ar, ai, c, x, result)
+    real(fgsl_double), intent(in) :: ar, ai, c, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hyperg_2f1_conj_renorm_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hyperg_2f1_conj_renorm_e = gsl_sf_hyperg_2f1_conj_renorm_e(ar, ai, c, x, res)
+    result = res
+  end function fgsl_sf_hyperg_2f1_conj_renorm_e
+!  fgsl_sf_hyperg_2f0 --> interface
+  function fgsl_sf_hyperg_2f0_e(a, b, x, result)
+    real(fgsl_double), intent(in) :: a, b, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hyperg_2f0_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hyperg_2f0_e = gsl_sf_hyperg_2f0_e(a, b, x, res)
+    result = res
+  end function fgsl_sf_hyperg_2f0_e
+!  fgsl_sf_laguerre_1 --> interface
+  function fgsl_sf_laguerre_1_e(a, x, result)
+    real(fgsl_double), intent(in) :: a, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_laguerre_1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_laguerre_1_e = gsl_sf_laguerre_1_e(a, x, res)
+    result = res
+  end function fgsl_sf_laguerre_1_e
+!  fgsl_sf_laguerre_2 --> interface
+  function fgsl_sf_laguerre_2_e(a, x, result)
+    real(fgsl_double), intent(in) :: a, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_laguerre_2_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_laguerre_2_e = gsl_sf_laguerre_2_e(a, x, res)
+    result = res
+  end function fgsl_sf_laguerre_2_e
+!  fgsl_sf_laguerre_3 --> interface
+  function fgsl_sf_laguerre_3_e(a, x, result)
+    real(fgsl_double), intent(in) :: a, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_laguerre_3_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_laguerre_3_e = gsl_sf_laguerre_3_e(a, x, res)
+    result = res
+  end function fgsl_sf_laguerre_3_e
+!  fgsl_sf_laguerre_n --> interface
+  function fgsl_sf_laguerre_n_e(n, a, x, result)
+    integer(fgsl_int), intent(in) :: n
+    real(fgsl_double), intent(in) :: a, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_laguerre_n_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_laguerre_n_e = gsl_sf_laguerre_n_e(n, a, x, res)
+    result = res
+  end function fgsl_sf_laguerre_n_e
+!  fgsl_sf_lambert_w0 --> interface
+  function fgsl_sf_lambert_w0_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_lambert_w0_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_lambert_w0_e = gsl_sf_lambert_w0_e(x, res)
+    result = res
+  end function fgsl_sf_lambert_w0_e
+!  fgsl_sf_lambert_wm1 --> interface
+  function fgsl_sf_lambert_wm1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_lambert_wm1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_lambert_wm1_e = gsl_sf_lambert_wm1_e(x, res)
+    result = res
+  end function fgsl_sf_lambert_wm1_e
+!  fgsl_sf_legendre_p1 --> interface
+  function fgsl_sf_legendre_p1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_legendre_p1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_legendre_p1_e = gsl_sf_legendre_p1_e(x, res)
+    result = res
+  end function fgsl_sf_legendre_p1_e
+!  fgsl_sf_legendre_p2 --> interface
+  function fgsl_sf_legendre_p2_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_legendre_p2_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_legendre_p2_e = gsl_sf_legendre_p2_e(x, res)
+    result = res
+  end function fgsl_sf_legendre_p2_e
+!  fgsl_sf_legendre_p3 --> interface
+  function fgsl_sf_legendre_p3_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_legendre_p3_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_legendre_p3_e = gsl_sf_legendre_p3_e(x, res)
+    result = res
+  end function fgsl_sf_legendre_p3_e
+!  fgsl_sf_legendre_pl --> interface
+  function fgsl_sf_legendre_pl_e(l, x, result)
+    integer(fgsl_int), intent(in) :: l
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_legendre_pl_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_legendre_pl_e = gsl_sf_legendre_pl_e(l, x, res)
+    result = res
+  end function fgsl_sf_legendre_pl_e
+  function fgsl_sf_legendre_pl_array(x, result_array)
+    real(fgsl_double), intent(in) :: x
+    real(fgsl_double), intent(inout), contiguous, target :: result_array(:)
+    real(fgsl_double) :: fgsl_sf_legendre_pl_array
+    fgsl_sf_legendre_pl_array = gsl_sf_legendre_pl_array( &
+         size(result_array, kind=fgsl_int)-1,&
+         x, c_loc(result_array))
+  end function fgsl_sf_legendre_pl_array
+  function fgsl_sf_legendre_pl_deriv_array(x, result_array, deriv_array)
+    real(fgsl_double), intent(in) :: x
+    real(fgsl_double), intent(inout), contiguous, target :: &
+         result_array(:), deriv_array(:)
+    real(fgsl_double) :: fgsl_sf_legendre_pl_deriv_array
+    if (size(result_array) /= size(deriv_array)) then
+      call fgsl_error('result_array and deriv_array dimensions do not match',&
+       __FILE__, __LINE__, fgsl_ebadlen)
+      fgsl_sf_legendre_pl_deriv_array = 0.0_fgsl_double
+      return
+    end if
+    fgsl_sf_legendre_pl_deriv_array = &
+         gsl_sf_legendre_pl_deriv_array(size(result_array, kind=fgsl_int)-1, &
+         x, c_loc(result_array), c_loc(deriv_array))
+  end function fgsl_sf_legendre_pl_deriv_array
+!  fgsl_sf_legendre_q0 --> interface
+  function fgsl_sf_legendre_q0_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_legendre_q0_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_legendre_q0_e = gsl_sf_legendre_q0_e(x, res)
+    result = res
+  end function fgsl_sf_legendre_q0_e
+!  fgsl_sf_legendre_q1 --> interface
+  function fgsl_sf_legendre_q1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_legendre_q1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_legendre_q1_e = gsl_sf_legendre_q1_e(x, res)
+    result = res
+  end function fgsl_sf_legendre_q1_e
+!  fgsl_sf_legendre_ql --> interface
+  function fgsl_sf_legendre_ql_e(l, x, result)
+    integer(fgsl_int), intent(in) :: l
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_legendre_ql_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_legendre_ql_e = gsl_sf_legendre_ql_e(l, x, res)
+    result = res
+  end function fgsl_sf_legendre_ql_e
+!  fgsl_sf_legendre_plm --> interface
+  function fgsl_sf_legendre_plm_e(l, m, x, result)
+    integer(fgsl_int), intent(in) :: l, m
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_legendre_plm_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_legendre_plm_e = gsl_sf_legendre_plm_e(l, m, x, res)
+    result = res
+  end function fgsl_sf_legendre_plm_e
+!  fgsl_sf_legendre_sphplm --> interface
+  function fgsl_sf_legendre_sphplm_e(l, m, x, result)
+    integer(fgsl_int), intent(in) :: l, m
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_legendre_sphplm_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_legendre_sphplm_e = gsl_sf_legendre_sphplm_e(l, m, x, res)
+    result = res
+  end function fgsl_sf_legendre_sphplm_e
+!  fgsl_sf_conicalp_half --> interface
+  function fgsl_sf_conicalp_half_e(lambda, x, result)
+    real(fgsl_double), intent(in) :: lambda, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_conicalp_half_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_conicalp_half_e = gsl_sf_conicalp_half_e(lambda, x, res)
+    result = res
+  end function fgsl_sf_conicalp_half_e
+!  fgsl_sf_conicalp_mhalf --> interface
+  function fgsl_sf_conicalp_mhalf_e(lambda, x, result)
+    real(fgsl_double), intent(in) :: lambda, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_conicalp_mhalf_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_conicalp_mhalf_e = gsl_sf_conicalp_mhalf_e(lambda, x, res)
+    result = res
+  end function fgsl_sf_conicalp_mhalf_e
+!  fgsl_sf_conicalp_0 --> interface
+  function fgsl_sf_conicalp_0_e(lambda, x, result)
+    real(fgsl_double), intent(in) :: lambda, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_conicalp_0_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_conicalp_0_e = gsl_sf_conicalp_0_e(lambda, x, res)
+    result = res
+  end function fgsl_sf_conicalp_0_e
+!  fgsl_sf_conicalp_1 --> interface
+  function fgsl_sf_conicalp_1_e(lambda, x, result)
+    real(fgsl_double), intent(in) :: lambda, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_conicalp_1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_conicalp_1_e = gsl_sf_conicalp_1_e(lambda, x, res)
+    result = res
+  end function fgsl_sf_conicalp_1_e
+!  fgsl_sf_conicalp_sph_reg --> interface
+  function fgsl_sf_conicalp_sph_reg_e(l, lambda, x, result)
+    integer(fgsl_int), intent(in) :: l
+    real(fgsl_double), intent(in) :: lambda, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_conicalp_sph_reg_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_conicalp_sph_reg_e = gsl_sf_conicalp_sph_reg_e(l, lambda, x, res)
+    result = res
+  end function fgsl_sf_conicalp_sph_reg_e
+!  fgsl_sf_conicalp_cyl_reg --> interface
+  function fgsl_sf_conicalp_cyl_reg_e(l, lambda, x, result)
+    integer(fgsl_int), intent(in) :: l
+    real(fgsl_double), intent(in) :: lambda, x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_conicalp_cyl_reg_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_conicalp_cyl_reg_e = gsl_sf_conicalp_cyl_reg_e(l, lambda, x, res)
+    result = res
+  end function fgsl_sf_conicalp_cyl_reg_e
+!  fgsl_sf_legendre_h3d_0 --> interface
+  function fgsl_sf_legendre_h3d_0_e(lambda, eta, result)
+    real(fgsl_double), intent(in) :: lambda, eta
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_legendre_h3d_0_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_legendre_h3d_0_e = gsl_sf_legendre_h3d_0_e(lambda, eta, res)
+    result = res
+  end function fgsl_sf_legendre_h3d_0_e
+!  fgsl_sf_legendre_h3d_1 --> interface
+  function fgsl_sf_legendre_h3d_1_e(lambda, eta, result)
+    real(fgsl_double), intent(in) :: lambda, eta
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_legendre_h3d_1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_legendre_h3d_1_e = gsl_sf_legendre_h3d_1_e(lambda, eta, res)
+    result = res
+  end function fgsl_sf_legendre_h3d_1_e
+!  fgsl_sf_legendre_h3d --> interface
+  function fgsl_sf_legendre_h3d_e(l, lambda, eta, result)
+    integer(fgsl_int), intent(in) :: l
+    real(fgsl_double), intent(in) :: lambda, eta
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_legendre_h3d_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_legendre_h3d_e = gsl_sf_legendre_h3d_e(l, lambda, eta, res)
+    result = res
+  end function fgsl_sf_legendre_h3d_e
+  function fgsl_sf_legendre_h3d_array(lambda, eta, result_array)
+    real(fgsl_double), intent(in) :: lambda, eta
+    real(fgsl_double), intent(inout), contiguous, target :: result_array(:)
+    integer(fgsl_int) :: fgsl_sf_legendre_h3d_array
+    fgsl_sf_legendre_h3d_array = gsl_sf_legendre_h3d_array( &
+         size(result_array, kind=fgsl_int)-1,&
+         lambda, eta, c_loc(result_array))
+  end function fgsl_sf_legendre_h3d_array
+!  fgsl_sf_log --> interface
+  function fgsl_sf_log_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_log_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_log_e = gsl_sf_log_e(x, res)
+    result = res
+  end function fgsl_sf_log_e
+!  fgsl_sf_log_abs --> interface
+  function fgsl_sf_log_abs_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_log_abs_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_log_abs_e = gsl_sf_log_abs_e(x, res)
+    result = res
+  end function fgsl_sf_log_abs_e
+  function fgsl_sf_complex_log_e(zr, zi, lnr, theta)
+    real(fgsl_double), intent(in) :: zr, zi
+    type(fgsl_sf_result), intent(out) :: lnr, theta
+    integer(fgsl_int) :: fgsl_sf_complex_log_e
+!
+    type(gsl_sf_result) :: lnr_loc, theta_loc
+    fgsl_sf_complex_log_e = gsl_sf_complex_log_e(zr, zi, lnr_loc, theta_loc)
+    lnr = lnr_loc
+    theta = theta_loc
+  end function fgsl_sf_complex_log_e
+!  fgsl_sf_log_1plusx --> interface
+  function fgsl_sf_log_1plusx_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_log_1plusx_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_log_1plusx_e = gsl_sf_log_1plusx_e(x, res)
+    result = res
+  end function fgsl_sf_log_1plusx_e
+!  fgsl_sf_log_1plusx_mx --> interface
+  function fgsl_sf_log_1plusx_mx_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_log_1plusx_mx_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_log_1plusx_mx_e = gsl_sf_log_1plusx_mx_e(x, res)
+    result = res
+  end function fgsl_sf_log_1plusx_mx_e
+!  fgsl_sf_psi_int --> interface
+  function fgsl_sf_psi_int_e(n, result)
+    integer(c_int), intent(in) :: n
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_psi_int_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_psi_int_e = gsl_sf_psi_int_e(n, res)
+    result = res
+  end function fgsl_sf_psi_int_e
+!  fgsl_sf_psi --> interface
+  function fgsl_sf_psi_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_psi_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_psi_e = gsl_sf_psi_e(x, res)
+    result = res
+  end function fgsl_sf_psi_e
+!  fgsl_sf_psi_1_int --> interface
+  function fgsl_sf_psi_1_int_e(n, result)
+    integer(c_int), intent(in) :: n
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_psi_1_int_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_psi_1_int_e = gsl_sf_psi_1_int_e(n, res)
+    result = res
+  end function fgsl_sf_psi_1_int_e
+!  fgsl_sf_psi_1 --> interface
+  function fgsl_sf_psi_1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_psi_1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_psi_1_e = gsl_sf_psi_1_e(x, res)
+    result = res
+  end function fgsl_sf_psi_1_e
+!  fgsl_sf_psi_n --> interface
+  function fgsl_sf_psi_n_e(m, x, result)
+    integer(fgsl_int), intent(in) :: m
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_psi_n_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_psi_n_e = gsl_sf_psi_n_e(m, x, res)
+    result = res
+  end function fgsl_sf_psi_n_e
+!  fgsl_sf_psi_1piy --> interface
+  function fgsl_sf_psi_1piy_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_psi_1piy_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_psi_1piy_e = gsl_sf_psi_1piy_e(x, res)
+    result = res
+  end function fgsl_sf_psi_1piy_e
+!  fgsl_sf_synchrotron_1 --> interface
+  function fgsl_sf_synchrotron_1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_synchrotron_1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_synchrotron_1_e = gsl_sf_synchrotron_1_e(x, res)
+    result = res
+  end function fgsl_sf_synchrotron_1_e
+!  fgsl_sf_synchrotron_2 --> interface
+  function fgsl_sf_synchrotron_2_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_synchrotron_2_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_synchrotron_2_e = gsl_sf_synchrotron_2_e(x, res)
+    result = res
+  end function fgsl_sf_synchrotron_2_e
+!  fgsl_sf_transport_2 --> interface
+  function fgsl_sf_transport_2_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_transport_2_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_transport_2_e = gsl_sf_transport_2_e(x, res)
+    result = res
+  end function fgsl_sf_transport_2_e
+!  fgsl_sf_transport_3 --> interface
+  function fgsl_sf_transport_3_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_transport_3_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_transport_3_e = gsl_sf_transport_3_e(x, res)
+    result = res
+  end function fgsl_sf_transport_3_e
+!  fgsl_sf_transport_4 --> interface
+  function fgsl_sf_transport_4_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_transport_4_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_transport_4_e = gsl_sf_transport_4_e(x, res)
+    result = res
+  end function fgsl_sf_transport_4_e
+!  fgsl_sf_transport_5 --> interface
+  function fgsl_sf_transport_5_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_transport_5_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_transport_5_e = gsl_sf_transport_5_e(x, res)
+    result = res
+  end function fgsl_sf_transport_5_e
+!  fgsl_sf_hypot --> interface
+  function fgsl_sf_hypot_e(x, y, result)
+    real(fgsl_double), intent(in) :: x, y
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hypot_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hypot_e = gsl_sf_hypot_e(x, y, res)
+    result = res
+  end function fgsl_sf_hypot_e
+!  fgsl_sf_sinc --> interface
+  function fgsl_sf_sinc_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_sinc_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_sinc_e = gsl_sf_sinc_e(x, res)
+    result = res
+  end function fgsl_sf_sinc_e
+  function fgsl_sf_complex_sin_e(zr, zi, szr, szi)
+    real(fgsl_double), intent(in) :: zr, zi
+    type(fgsl_sf_result), intent(out) :: szr, szi
+    integer(fgsl_int) :: fgsl_sf_complex_sin_e
+!
+    type(gsl_sf_result) :: r_loc, i_loc
+    fgsl_sf_complex_sin_e = gsl_sf_complex_sin_e(zr, zi, r_loc, i_loc)
+    szr = r_loc
+    szi = i_loc
+  end function fgsl_sf_complex_sin_e
+  function fgsl_sf_complex_cos_e(zr, zi, czr, czi)
+    real(fgsl_double), intent(in) :: zr, zi
+    type(fgsl_sf_result), intent(out) :: czr, czi
+    integer(fgsl_int) :: fgsl_sf_complex_cos_e
+!
+    type(gsl_sf_result) :: r_loc, i_loc
+    fgsl_sf_complex_cos_e = gsl_sf_complex_cos_e(zr, zi, r_loc, i_loc)
+    czr = r_loc
+    czi = i_loc
+  end function fgsl_sf_complex_cos_e
+  function fgsl_sf_complex_logsin_e(zr, zi, lszr, lszi)
+    real(fgsl_double), intent(in) :: zr, zi
+    type(fgsl_sf_result), intent(out) :: lszr, lszi
+    integer(fgsl_int) :: fgsl_sf_complex_logsin_e
+!
+    type(gsl_sf_result) :: r_loc, i_loc
+    fgsl_sf_complex_logsin_e = gsl_sf_complex_logsin_e(zr, zi, r_loc, i_loc)
+    lszr = r_loc
+    lszi = i_loc
+  end function fgsl_sf_complex_logsin_e
+!  fgsl_sf_lnsinh --> interface
+  function fgsl_sf_lnsinh_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_lnsinh_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_lnsinh_e = gsl_sf_lnsinh_e(x, res)
+    result = res
+  end function fgsl_sf_lnsinh_e
+!  fgsl_sf_lncosh --> interface
+  function fgsl_sf_lncosh_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_lncosh_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_lncosh_e = gsl_sf_lncosh_e(x, res)
+    result = res
+  end function fgsl_sf_lncosh_e
+  function fgsl_sf_polar_to_rect(r, theta, x, y)
+    real(fgsl_double), intent(in) :: r, theta
+    type(fgsl_sf_result), intent(out) :: x, y
+    integer(fgsl_int) :: fgsl_sf_polar_to_rect
+!
+    type(gsl_sf_result) :: x_loc, y_loc
+    fgsl_sf_polar_to_rect = gsl_sf_polar_to_rect(r, theta, x_loc, y_loc)
+    x = x_loc
+    y = y_loc
+  end function fgsl_sf_polar_to_rect
+  function fgsl_sf_rect_to_polar(x, y, r, theta)
+    real(fgsl_double), intent(in) :: x, y
+    type(fgsl_sf_result), intent(out) :: r, theta
+    integer(fgsl_int) :: fgsl_sf_rect_to_polar
+!
+    type(gsl_sf_result) :: r_loc, th_loc
+    fgsl_sf_rect_to_polar = gsl_sf_rect_to_polar(x, y, r_loc, th_loc)
+    r = r_loc
+    theta = th_loc
+  end function fgsl_sf_rect_to_polar
+!  fgsl_sf_angle_restrict_symm --> interface
+  function fgsl_sf_angle_restrict_symm_e(theta)
+    real(fgsl_double), intent(inout) :: theta
+    integer(fgsl_int) :: fgsl_sf_angle_restrict_symm_e
+!
+    fgsl_sf_angle_restrict_symm_e = gsl_sf_angle_restrict_symm_e(theta)
+  end function fgsl_sf_angle_restrict_symm_e
+!  fgsl_sf_angle_restrict_pos --> interface
+  function fgsl_sf_angle_restrict_pos_e(theta)
+    real(fgsl_double), intent(inout) :: theta
+    integer(fgsl_int) :: fgsl_sf_angle_restrict_pos_e
+!
+    fgsl_sf_angle_restrict_pos_e = gsl_sf_angle_restrict_pos_e(theta)
+  end function fgsl_sf_angle_restrict_pos_e
+  function fgsl_sf_sin_err_e(x, dx, result)
+    real(fgsl_double), intent(in) :: x, dx
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_sin_err_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_sin_err_e = gsl_sf_sin_err_e(x, dx, res)
+    result = res
+  end function fgsl_sf_sin_err_e
+  function fgsl_sf_cos_err_e(x, dx, result)
+    real(fgsl_double), intent(in) :: x, dx
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_cos_err_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_cos_err_e = gsl_sf_cos_err_e(x, dx, res)
+    result = res
+  end function fgsl_sf_cos_err_e
+!  fgsl_sf_zeta_int --> interface
+  function fgsl_sf_zeta_int_e(n, result)
+    integer(c_int), intent(in) :: n
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_zeta_int_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_zeta_int_e = gsl_sf_zeta_int_e(n, res)
+    result = res
+  end function fgsl_sf_zeta_int_e
+!  fgsl_sf_zeta --> interface
+  function fgsl_sf_zeta_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_zeta_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_zeta_e = gsl_sf_zeta_e(x, res)
+    result = res
+  end function fgsl_sf_zeta_e
+!  fgsl_sf_zetam1_int --> interface
+  function fgsl_sf_zetam1_int_e(n, result)
+    integer(c_int), intent(in) :: n
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_zetam1_int_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_zetam1_int_e = gsl_sf_zetam1_int_e(n, res)
+    result = res
+  end function fgsl_sf_zetam1_int_e
+!  fgsl_sf_zetam1 --> interface
+  function fgsl_sf_zetam1_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_zetam1_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_zetam1_e = gsl_sf_zetam1_e(x, res)
+    result = res
+  end function fgsl_sf_zetam1_e
+!  fgsl_sf_hzeta --> interface
+  function fgsl_sf_hzeta_e(s, q, result)
+    real(fgsl_double), intent(in) :: s, q
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_hzeta_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_hzeta_e = gsl_sf_hzeta_e(s, q, res)
+    result = res
+  end function fgsl_sf_hzeta_e
+!  fgsl_sf_eta_int --> interface
+  function fgsl_sf_eta_int_e(n, result)
+    integer(c_int), intent(in) :: n
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_eta_int_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_eta_int_e = gsl_sf_eta_int_e(n, res)
+    result = res
+  end function fgsl_sf_eta_int_e
+!  fgsl_sf_eta --> interface
+  function fgsl_sf_eta_e(x, result)
+    real(fgsl_double), intent(in) :: x
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_eta_e
+!
+    type(gsl_sf_result) :: res
+    fgsl_sf_eta_e = gsl_sf_eta_e(x, res)
+    result = res
+  end function fgsl_sf_eta_e
+!
+  elemental subroutine gsl_sf_to_fgsl_sf(result, source)
+    type(fgsl_sf_result), intent(out) :: result
+    type(gsl_sf_result), intent(in) :: source
+    result%val = source%val
+    result%err = source%err
+  end subroutine gsl_sf_to_fgsl_sf
+  elemental subroutine gsl_sfe10_to_fgsl_sfe10(result, source)
+    type(fgsl_sf_result_e10), intent(out) :: result
+    type(gsl_sf_result_e10), intent(in) :: source
+    result%val = source%val
+    result%err = source%err
+    result%e10 = source%e10
+  end subroutine gsl_sfe10_to_fgsl_sfe10
+  function fgsl_sf_legendre_array(norm, lmax, x, result_array)
+    type(fgsl_sf_legendre_t), intent(in) :: norm
+    integer(fgsl_size_t), intent(in) :: lmax
+    real(fgsl_double), intent(in) :: x
+    real(fgsl_double), dimension(:), intent(inout), contiguous, &
+         target :: result_array
+    integer(fgsl_int) :: fgsl_sf_legendre_array
+    fgsl_sf_legendre_array = gsl_sf_legendre_array(&
+    norm%gsl_sf_legendre_t, lmax, x, c_loc(result_array))
+  end function fgsl_sf_legendre_array
+  function fgsl_sf_legendre_array_e(norm, lmax, x, csphase, result_array)
+    type(fgsl_sf_legendre_t), intent(in) :: norm
+    integer(fgsl_size_t), intent(in) :: lmax
+    real(fgsl_double), intent(in) :: x, csphase
+    real(fgsl_double), dimension(:), intent(inout), contiguous, target :: &
+         result_array
+    integer(fgsl_int) :: fgsl_sf_legendre_array_e
+    fgsl_sf_legendre_array_e = gsl_sf_legendre_array_e(&
+    norm%gsl_sf_legendre_t, lmax, x, csphase, c_loc(result_array))
+  end function fgsl_sf_legendre_array_e
+  function fgsl_sf_legendre_deriv_array(norm, lmax, x, result_array, result_deriv_array)
+    type(fgsl_sf_legendre_t), intent(in) :: norm
+    integer(fgsl_size_t), intent(in) :: lmax
+    real(fgsl_double), intent(in) :: x
+    real(fgsl_double), dimension(:), intent(inout), contiguous, &
+         target :: result_array, result_deriv_array
+    integer(fgsl_int) :: fgsl_sf_legendre_deriv_array
+    fgsl_sf_legendre_deriv_array = gsl_sf_legendre_deriv_array(&
+    norm%gsl_sf_legendre_t, lmax, x, &
+    c_loc(result_array), c_loc(result_deriv_array))
+  end function fgsl_sf_legendre_deriv_array
+  function fgsl_sf_legendre_deriv_array_e(norm, lmax, x, csphase, result_array, &
+    result_deriv_array)
+    type(fgsl_sf_legendre_t), intent(in) :: norm
+    integer(fgsl_size_t), intent(in) :: lmax
+    real(fgsl_double), intent(in) :: x, csphase
+    real(fgsl_double), dimension(:), intent(inout), contiguous, target :: &
+         result_array, result_deriv_array
+    integer(fgsl_int) :: fgsl_sf_legendre_deriv_array_e
+    fgsl_sf_legendre_deriv_array_e = gsl_sf_legendre_deriv_array_e(&
+    norm%gsl_sf_legendre_t, lmax, x, csphase, &
+    c_loc(result_array), c_loc(result_deriv_array))
+  end function fgsl_sf_legendre_deriv_array_e
+  function fgsl_sf_legendre_deriv_alt_array(norm, lmax, x, result_array, result_deriv_array)
+    type(fgsl_sf_legendre_t), intent(in) :: norm
+    integer(fgsl_size_t), intent(in) :: lmax
+    real(fgsl_double), intent(in) :: x
+    real(fgsl_double), dimension(:), intent(inout), contiguous, target :: &
+         result_array, result_deriv_array
+    integer(fgsl_int) :: fgsl_sf_legendre_deriv_alt_array
+    fgsl_sf_legendre_deriv_alt_array = gsl_sf_legendre_deriv_alt_array(&
+    norm%gsl_sf_legendre_t, lmax, x, c_loc(result_array), &
+    c_loc(result_deriv_array))
+  end function fgsl_sf_legendre_deriv_alt_array
+  function fgsl_sf_legendre_deriv_alt_array_e(norm, lmax, x, csphase, result_array, &
+    result_deriv_array)
+    type(fgsl_sf_legendre_t), intent(in) :: norm
+    integer(fgsl_size_t), intent(in) :: lmax
+    real(fgsl_double), intent(in) :: x, csphase
+    real(fgsl_double), dimension(:), intent(inout), contiguous, target :: &
+         result_array, result_deriv_array
+    integer(fgsl_int) :: fgsl_sf_legendre_deriv_alt_array_e
+    fgsl_sf_legendre_deriv_alt_array_e = gsl_sf_legendre_deriv_alt_array_e(&
+    norm%gsl_sf_legendre_t, lmax, x, csphase, &
+    c_loc(result_array), c_loc(result_deriv_array))
+  end function fgsl_sf_legendre_deriv_alt_array_e
+  function fgsl_sf_legendre_deriv2_array(norm, lmax, x, result_array, &
+    result_deriv_array, result_deriv2_array)
+    type(fgsl_sf_legendre_t), intent(in) :: norm
+    integer(fgsl_size_t), intent(in) :: lmax
+    real(fgsl_double), intent(in) :: x
+    real(fgsl_double), dimension(:), intent(inout), contiguous, target :: &
+         result_array, result_deriv_array, result_deriv2_array
+    integer(fgsl_int) :: fgsl_sf_legendre_deriv2_array
+    fgsl_sf_legendre_deriv2_array = gsl_sf_legendre_deriv2_array(&
+    norm%gsl_sf_legendre_t, lmax, x, c_loc(result_array), &
+    c_loc(result_deriv_array), c_loc(result_deriv2_array))
+  end function fgsl_sf_legendre_deriv2_array
+  function fgsl_sf_legendre_deriv2_array_e(norm, lmax, x, csphase, result_array, &
+    result_deriv_array, result_deriv2_array)
+    type(fgsl_sf_legendre_t), intent(in) :: norm
+    integer(fgsl_size_t), intent(in) :: lmax
+    real(fgsl_double), intent(in) :: x, csphase
+    real(fgsl_double), dimension(:), intent(inout), contiguous, target :: &
+         result_array, &
+    result_deriv_array, result_deriv2_array
+    integer(fgsl_int) :: fgsl_sf_legendre_deriv2_array_e
+    fgsl_sf_legendre_deriv2_array_e = gsl_sf_legendre_deriv2_array_e(&
+    norm%gsl_sf_legendre_t, lmax, x, csphase, c_loc(result_array), &
+    c_loc(result_deriv_array), c_loc(result_deriv2_array))
+  end function fgsl_sf_legendre_deriv2_array_e
+  function fgsl_sf_legendre_deriv2_alt_array(norm, lmax, x, result_array, &
+    result_deriv_array, result_deriv2_array)
+    type(fgsl_sf_legendre_t), intent(in) :: norm
+    integer(fgsl_size_t), intent(in) :: lmax
+    real(fgsl_double), intent(in) :: x
+    real(fgsl_double), dimension(:), intent(inout), contiguous, target :: &
+         result_array, result_deriv_array, result_deriv2_array
+    integer(fgsl_int) :: fgsl_sf_legendre_deriv2_alt_array
+    fgsl_sf_legendre_deriv2_alt_array = gsl_sf_legendre_deriv2_alt_array(&
+    norm%gsl_sf_legendre_t, lmax, x, c_loc(result_array), &
+    c_loc(result_deriv_array), c_loc(result_deriv2_array))
+  end function fgsl_sf_legendre_deriv2_alt_array
+  function fgsl_sf_legendre_deriv2_alt_array_e(norm, lmax, x, csphase, result_array, &
+    result_deriv_array, result_deriv2_array)
+    type(fgsl_sf_legendre_t), intent(in) :: norm
+    integer(fgsl_size_t), intent(in) :: lmax
+    real(fgsl_double), intent(in) :: x, csphase
+    real(fgsl_double), dimension(:), intent(inout), contiguous, target :: &
+         result_array, result_deriv_array, result_deriv2_array
+    integer(fgsl_int) :: fgsl_sf_legendre_deriv2_alt_array_e
+    fgsl_sf_legendre_deriv2_alt_array_e = gsl_sf_legendre_deriv2_alt_array_e(&
+    norm%gsl_sf_legendre_t, lmax, x, csphase, c_loc(result_array), &
+    c_loc(result_deriv_array), c_loc(result_deriv2_array))
+  end function fgsl_sf_legendre_deriv2_alt_array_e
+!  fgsl_sf_legendre_array_n --> interface
+!  fgsl_sf_legendre_array_index --> interface
+!  fgsl_sf_legendre_nlm --> index
+  function fgsl_sf_mathieu_a_array(order_min, order_max, qq, work, result_array)
+    integer(fgsl_int), intent(in) :: order_min, order_max
+    real(fgsl_double), intent(in) :: qq
+    type(fgsl_sf_mathieu_workspace), intent(inout) :: work
+    real(fgsl_double), dimension(:), intent(inout), contiguous, target :: &
+         result_array
+    integer(fgsl_int) :: fgsl_sf_mathieu_a_array
+    fgsl_sf_mathieu_a_array = gsl_sf_mathieu_a_array(order_min, order_max, qq, &
+    work%gsl_sf_mathieu_workspace, c_loc(result_array))
+  end function fgsl_sf_mathieu_a_array
+  function fgsl_sf_mathieu_b_array(order_min, order_max, qq, work, result_array)
+    integer(fgsl_int), intent(in) :: order_min, order_max
+    real(fgsl_double), intent(in) :: qq
+    type(fgsl_sf_mathieu_workspace), intent(inout) :: work
+    real(fgsl_double), dimension(:), intent(inout), contiguous, target :: &
+         result_array
+    integer(fgsl_int) :: fgsl_sf_mathieu_b_array
+    fgsl_sf_mathieu_b_array = gsl_sf_mathieu_b_array(order_min, order_max, qq, &
+    work%gsl_sf_mathieu_workspace, c_loc(result_array))
+  end function fgsl_sf_mathieu_b_array
+  function fgsl_sf_mathieu_a_e(order, qq, result)
+    integer(c_int), intent(in) :: order
+    real(c_double), intent(in) :: qq
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_mathieu_a_e
+    type(gsl_sf_result), target :: res
+    fgsl_sf_mathieu_a_e = gsl_sf_mathieu_a_e(order, qq, c_loc(res))
+    result = res
+  end function fgsl_sf_mathieu_a_e
+!  fgsl_sf_mathieu_a --> interface
+  function fgsl_sf_mathieu_b_e(order, qq, result)
+    integer(c_int), intent(in) :: order
+    real(c_double), intent(in) :: qq
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_mathieu_b_e
+    type(gsl_sf_result), target :: res
+    fgsl_sf_mathieu_b_e = gsl_sf_mathieu_b_e(order, qq, c_loc(res))
+    result = res
+  end function fgsl_sf_mathieu_b_e
+!  fgsl_sf_mathieu_b --> interface
+!  fgsl_sf_mathieu_a_coeff --> interface
+!  fgsl_sf_mathieu_b_coeff --> interface
+  function fgsl_sf_mathieu_alloc(nn, qq)
+    integer(fgsl_size_t), intent(in) :: nn
+    real(fgsl_double), intent(in) :: qq
+    type(fgsl_sf_mathieu_workspace) :: fgsl_sf_mathieu_alloc
+    fgsl_sf_mathieu_alloc%gsl_sf_mathieu_workspace = &
+    gsl_sf_mathieu_alloc(nn, qq)
+  end function fgsl_sf_mathieu_alloc
+  subroutine fgsl_sf_mathieu_free(workspace)
+    type(fgsl_sf_mathieu_workspace), intent(inout) :: workspace
+    call gsl_sf_mathieu_free(workspace%gsl_sf_mathieu_workspace)
+  end subroutine fgsl_sf_mathieu_free
+  function fgsl_sf_mathieu_ce_e(order, qq, zz, result)
+    integer(fgsl_int), intent(in) :: order
+    real(fgsl_double), intent(in) :: qq, zz
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_mathieu_ce_e
+    type(gsl_sf_result), target :: res
+    fgsl_sf_mathieu_ce_e = gsl_sf_mathieu_ce_e(order, qq, zz, c_loc(res))
+    result = res
+  end function fgsl_sf_mathieu_ce_e
+!  fgsl_sf_mathieu_ce --> interface
+  function fgsl_sf_mathieu_se_e(order, qq, zz, result)
+    integer(fgsl_int), intent(in) :: order
+    real(fgsl_double), intent(in) :: qq, zz
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_mathieu_se_e
+    type(gsl_sf_result), target :: res
+    fgsl_sf_mathieu_se_e = gsl_sf_mathieu_se_e(order, qq, zz, c_loc(res))
+    result = res
+  end function fgsl_sf_mathieu_se_e
+!  fgsl_sf_mathieu_se --> interface
+  function fgsl_sf_mathieu_ce_array(nmin, nmax, qq, zz, work, result_array)
+    integer(fgsl_int), intent(in) :: nmin, nmax
+    real(fgsl_double), intent(in) :: qq, zz
+    type(fgsl_sf_mathieu_workspace), intent(inout) :: work
+    real(fgsl_double), dimension(:), intent(inout), contiguous, target :: &
+         result_array
+    integer(fgsl_int) :: fgsl_sf_mathieu_ce_array
+    fgsl_sf_mathieu_ce_array = gsl_sf_mathieu_ce_array(nmin, nmax, qq, zz, &
+    work%gsl_sf_mathieu_workspace, c_loc(result_array))
+  end function fgsl_sf_mathieu_ce_array
+  function fgsl_sf_mathieu_se_array(nmin, nmax, qq, zz, work, result_array)
+    integer(fgsl_int), intent(in) :: nmin, nmax
+    real(fgsl_double), intent(in) :: qq, zz
+    type(fgsl_sf_mathieu_workspace), intent(inout) :: work
+    real(fgsl_double), dimension(:), intent(inout), contiguous, target :: &
+         result_array
+    integer(fgsl_int) :: fgsl_sf_mathieu_se_array
+    fgsl_sf_mathieu_se_array = gsl_sf_mathieu_se_array(nmin, nmax, qq, zz, &
+    work%gsl_sf_mathieu_workspace, c_loc(result_array))
+  end function fgsl_sf_mathieu_se_array
+  function fgsl_sf_mathieu_mc_e(kind, order, qq, zz, result)
+    integer(fgsl_int), intent(in) :: kind, order
+    real(fgsl_double), intent(in) :: qq, zz
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_mathieu_mc_e
+    type(gsl_sf_result), target :: res
+    fgsl_sf_mathieu_mc_e = gsl_sf_mathieu_mc_e(kind, order, qq, zz, c_loc(res))
+    result = res
+  end function fgsl_sf_mathieu_mc_e
+!  fgsl_sf_mathieu_mc --> interface
+  function fgsl_sf_mathieu_ms_e(kind, order, qq, zz, result)
+    integer(fgsl_int), intent(in) :: kind, order
+    real(fgsl_double), intent(in) :: qq, zz
+    type(fgsl_sf_result), intent(out) :: result
+    integer(fgsl_int) :: fgsl_sf_mathieu_ms_e
+    type(gsl_sf_result), target :: res
+    fgsl_sf_mathieu_ms_e = gsl_sf_mathieu_ms_e(kind, order, qq, zz, c_loc(res))
+    result = res
+  end function fgsl_sf_mathieu_ms_e
+!  fgsl_sf_mathieu_ms --> interface
+  function fgsl_sf_mathieu_mc_array(kind, nmin, nmax, qq, zz, work, result_array)
+    integer(fgsl_int), intent(in) :: kind, nmin, nmax
+    real(fgsl_double), intent(in) :: qq, zz
+    type(fgsl_sf_mathieu_workspace), intent(inout) :: work
+    real(fgsl_double), dimension(:), intent(inout), contiguous, target :: &
+         result_array
+    integer(fgsl_int) :: fgsl_sf_mathieu_mc_array
+    fgsl_sf_mathieu_mc_array = gsl_sf_mathieu_mc_array(kind, nmin, nmax, qq, zz, &
+    work%gsl_sf_mathieu_workspace, c_loc(result_array))
+  end function fgsl_sf_mathieu_mc_array
+  function fgsl_sf_mathieu_ms_array(kind, nmin, nmax, qq, zz, work, result_array)
+    integer(fgsl_int), intent(in) :: kind, nmin, nmax
+    real(fgsl_double), intent(in) :: qq, zz
+    type(fgsl_sf_mathieu_workspace), intent(inout) :: work
+    real(fgsl_double), dimension(:), intent(inout), contiguous, target :: &
+         result_array
+    integer(fgsl_int) :: fgsl_sf_mathieu_ms_array
+    fgsl_sf_mathieu_ms_array = gsl_sf_mathieu_ms_array(kind, nmin, nmax, qq, zz, &
+    work%gsl_sf_mathieu_workspace, c_loc(result_array))
+  end function fgsl_sf_mathieu_ms_array
