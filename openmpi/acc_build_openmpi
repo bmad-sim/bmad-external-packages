@@ -134,7 +134,7 @@ func_configure_make_install () {
                 fi
                 ;;
             *)
-                    if ( [ "${INSTALLED_OPENMPI_MAJOR_VER}" -eq "${major}" ] && [ "${INSTALLED_OPENMPI_MINOR_VER}" -gt "${minor}" ] ) ; then
+                    if ( [ "${INSTALLED_OPENMPI_MAJOR_VER}" -eq "${major}" ] && [ "${INSTALLED_OPENMPI_MINOR_VER}" -ge "${minor}" ] ) ; then
                     if [ "${INSTALLED_OPENMPI_FORT}" != "${FC}" ] ; then
                         echo -e "\nInstalled OpenMPI is not built with the requested ${FC} Fortran compiler,"
                         echo -e "building ${PACKAGE_VERSION}"
