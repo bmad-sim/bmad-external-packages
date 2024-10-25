@@ -28,6 +28,7 @@ func_configure_make_install () {
             --disable-dependency-tracking \
             --enable-threads \
             --includedir=${OUTPUT_DIR}/include \
+	    --disable-doc \
             ${CONFIGURE_FLAGS} \
 	    ${CONFIGURE_PIC} \
             ${CONFIGURE_DEBUG}
