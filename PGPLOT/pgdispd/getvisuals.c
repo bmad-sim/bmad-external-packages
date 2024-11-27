@@ -28,6 +28,7 @@
 #include "figdisp.h"
 #include "globals.h"
 #include "messages.h"
+#include "pgdispd.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -323,7 +324,7 @@ int getvisuals()
 	while (res.lgcolors > 2)
 	{
 		if (lg.colors=getcolors(UseROVisual, &linevisual, &linecmap,
-			lg.pix, res.lgcolors, res.lgcolors, &linedepth)) break;
+                                        lg.pix, res.lgcolors, res.lgcolors, &linedepth, MAX_DEPTH, 1)) break;
 
 		/* lower our standards */
 		if (res.lgcolors > 16) res.lgcolors=16;

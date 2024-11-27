@@ -57,6 +57,7 @@
 /* The program include files */
 #include "figdisp.h"
 #include "globals.h"
+#include "pgdispd.h"
 
 int mainloop()
 {
