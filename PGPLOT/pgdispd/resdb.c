@@ -47,6 +47,7 @@ static char rcsid[]="@(#)$Id: resdb.c 1118 2003-02-26 16:43:25Z cesrulib $";
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #ifndef VMS
 #include <pwd.h>
 #endif
@@ -1041,8 +1042,6 @@ char *dest;
 {
 	int uid;
 
-	extern char *getenv();
-	extern int getuid();
 	extern struct passwd *getpwuid();
 	struct passwd *pw;
 	register char *ptr;

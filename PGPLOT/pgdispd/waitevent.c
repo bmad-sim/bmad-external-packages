@@ -46,6 +46,7 @@
 #include "globals.h"
 #include "messages.h"
 #include "commands.h"
+#include "pgdispd.h"
 
 /* Choose one of the following to select either good response time or low */
 /* system load, keeping in mind what your system provides.  If none of the */
