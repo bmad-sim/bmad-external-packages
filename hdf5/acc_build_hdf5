@@ -15,11 +15,11 @@ func_configure_make_install () {
     if [ ! -e ALREADY_BUILT ]
     then
 	[ -n "${CMAKE_BINARY}" ] || CMAKE_BINARY=cmake
-	if [ "${BUILD_SHARED_LIBS}" -eq 1]
+	if [ "${BUILD_SHARED_LIBS}" -eq 1 ]
 	then
 	    SHARED=ON
 	    STATIC=ON
-	elif [ "${BUILD_SHARED_ONLY}" -eq 1]
+	elif [ "${BUILD_SHARED_ONLY}" -eq 1 ]
 	then
 	    SHARED=ON
 	    STATIC=OFF
