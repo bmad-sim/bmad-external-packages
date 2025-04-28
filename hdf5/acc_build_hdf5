@@ -38,6 +38,7 @@ func_configure_make_install () {
 
 	[ "${BUILD_TYPE}" = debug ] && H5CM_CONFIG=Debug || H5CM_CONFIG=Release
 	${CMAKE_BINARY} --build . --config $H5CM_CONFIG
+	${CMAKE_BINARY} --install . --config $H5CM_CONFIG
         export RETVAL=$?
     fi
 
