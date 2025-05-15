@@ -27,22 +27,26 @@ func_configure_make_install () {
 	    SHARED=OFF
 	    STATIC=ON
 	fi
+        CMAKE_BUILD_TYPE=None
+        [ "${BUILD_TYPE}" == "debug" ] && CMAKE_BUILD_TYPE=Debug
+        [ "${BUILD_TYPE}" == "production" ] && CMAKE_BUILD_TYPE=Release
+
 	[ -n "${DIST_BUILD}" ] && ENABLE_RPATH=ON || ENABLE_RPATH=OFF
-	${CMAKE_BINARY} -DCMAKE_INSTALL_PREFIX=${OUTPUT_DIR} \
+	${CMAKE_BINARY} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
+                        -DCMAKE_INSTALL_PREFIX=${OUTPUT_DIR} \
 			-DBUILD_SHARED_LIBS=$SHARED \
 			-DBUILD_STATIC_LIBS=$STATIC \
 			-DUSE_RPATH=${ENABLE_RPATH} \
                         -Wno-dev \
-                        -DHDF5_USE_GNU_DIRS=ON \
+                        -DHDF5_INSTALL_CMAKE_DIR=lib/cmake/hdf5 \
                         -DHDF5_BUILD_HL_LIB=ON \
                         -DHDF5_BUILD_FORTRAN=ON \
 			-DHDF5_BUILD_GENERATORS=OFF \
 			-DHDF5_ENABLE_SZIP_SUPPORT=OFF \
 			..
 
-	[ "${BUILD_TYPE}" = debug ] && H5CM_CONFIG=Debug || H5CM_CONFIG=Release
-	${CMAKE_BINARY} --build . --config $H5CM_CONFIG
-	${CMAKE_BINARY} --install . --config $H5CM_CONFIG
+	${CMAKE_BINARY} --build .
+	${CMAKE_BINARY} --install .
         export RETVAL=$?
     fi
 
