@@ -28,7 +28,7 @@ func_configure_make_install () {
 	    STATIC=ON
 	fi
         CMAKE_BUILD_TYPE=None
-        [ "${BUILD_TYPE}" == "debug" ] && CMAKE_BUILD_TYPE=Debug
+        [ "${BUILD_TYPE}" == "debug" ] && CMAKE_BUILD_TYPE=RelWithDebInfo
         [ "${BUILD_TYPE}" == "production" ] && CMAKE_BUILD_TYPE=Release
 
 	[ -n "${DIST_BUILD}" ] && ENABLE_RPATH=ON || ENABLE_RPATH=OFF
