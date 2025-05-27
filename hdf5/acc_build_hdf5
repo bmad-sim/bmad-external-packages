@@ -12,35 +12,43 @@ func_configure_make_install () {
 
     cd ${WORK_DIR}
 
-    [ "${BUILD_TYPE}" == "debug" ] && CONFIGURE_DEBUG="--enable-build-mode=debug"
+    if [ ! -e ALREADY_BUILT ]
+    then
+	[ -n "${CMAKE_BINARY}" ] || CMAKE_BINARY=cmake
+	if [ "${BUILD_SHARED_LIBS}" -eq 1 ]
+	then
+	    SHARED=ON
+	    STATIC=ON
+	elif [ "${BUILD_SHARED_ONLY}" -eq 1 ]
+	then
+	    SHARED=ON
+	    STATIC=OFF
+	else
+	    SHARED=OFF
+	    STATIC=ON
+	fi
+        CMAKE_BUILD_TYPE=None
+        [ "${BUILD_TYPE}" == "debug" ] && CMAKE_BUILD_TYPE=RelWithDebInfo
+        [ "${BUILD_TYPE}" == "production" ] && CMAKE_BUILD_TYPE=Release
 
-    # Added support for SHARED only library builds, as requested in RT#63875
-    CONFIGURE_FLAGS=${SHARED_LIB_CONFIGURE_FLAGS}
+	[ -n "${DIST_BUILD}" ] && ENABLE_RPATH=ON || ENABLE_RPATH=OFF
+	${CMAKE_BINARY} -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
+                        -DCMAKE_INSTALL_PREFIX=${OUTPUT_DIR} \
+			-DBUILD_SHARED_LIBS=$SHARED \
+			-DBUILD_STATIC_LIBS=$STATIC \
+			-DUSE_RPATH=${ENABLE_RPATH} \
+                        -Wno-dev \
+                        -DHDF5_INSTALL_CMAKE_DIR=lib/cmake/hdf5 \
+                        -DHDF5_BUILD_HL_LIB=ON \
+                        -DHDF5_BUILD_FORTRAN=ON \
+			-DHDF5_BUILD_GENERATORS=OFF \
+			-DHDF5_ENABLE_SZIP_SUPPORT=OFF \
+			..
 
-    if [ ! -e ALREADY_BUILT ] ; then
-      ./configure --prefix=${OUTPUT_DIR} \
-        --enable-fortran \
-        --enable-cxx \
-        --without-szlib \
-        --without-zlib \
-        ${CONFIGURE_DEBUG} \
-        ${CONFIGURE_FLAGS}
-
-        # Adding ACC_SET_GMAKE_JOBS to build as requested in RT#67548 
-        ${GMAKE} -j ${ACC_SET_GMAKE_JOBS} 
-
-        ${GMAKE} install
-
+	${CMAKE_BINARY} --build .
+	${CMAKE_BINARY} --install .
         export RETVAL=$?
     fi
-
-    if [ "${ARGUMENTS[1]}" == "-test" ] ; then 
-        echo -e "\nBuilding tests for `echo ${PACKAGE_VERSION}`...\n" 
-        ${GMAKE} check
-        export RETVAL=$?
-    fi
-
-    if ( [ `uname` == "Darwin" ] && [ "${FC}" == "ifort" ] && [ "${RETVAL}" -eq 0 ] ) ; then ln -s /opt/intel/lib/* ${OUTPUT_DIR}/lib/ &> /dev/null 2>&1 ; fi
 
     if [ ! -L ${OUTPUT_DIR}/modules/hdf5.mod ] ; then cd ${OUTPUT_DIR}/modules/ ; ln -s ../include/h5*.mod . ; ln -s ../include/hdf5.mod . ; fi
 
