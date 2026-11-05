@@ -21,8 +21,8 @@ concurrency:
 
 jobs:
   build:
-    name: ${{ matrix.name }}
-    runs-on: ubuntu-latest
+    name: ${{ matrix.group.name }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     defaults:
       run:
         shell: bash
@@ -30,7 +30,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        include:
+        os: [ubuntu-24.04, ubuntu-26.04]
+        group:
           - name: PGPLOT
             packages: PGPLOT
           - name: plplot
@@ -40,8 +41,9 @@ jobs:
             packages: hdf5
           - name: fftw
             packages: fftw
+          # bmad's Master.cmake (used by lapack95) requires HDF5.
           - name: lapack
-            packages: lapack lapack95
+            packages: hdf5 lapack lapack95
           - name: gsl
             packages: gsl fgsl
           - name: xraylib
@@ -72,14 +74,14 @@ jobs:
 
       - name: Copy packages into bmad tree
         run: |
-          for pkg in ${{ matrix.packages }}; do
+          for pkg in ${{ matrix.group.packages }}; do
             rm -rf "$GITHUB_WORKSPACE/$pkg"
             cp -r "external_packages/$pkg" "$GITHUB_WORKSPACE/"
           done
 
-      - name: Build ${{ matrix.packages }}
+      - name: Build ${{ matrix.group.packages }}
         env:
-          PLOT_PACKAGE: ${{ matrix.plot || 'pgplot' }}
+          PLOT_PACKAGE: ${{ matrix.group.plot || 'pgplot' }}
         run: |
           cat <<EOF >>./util/dist_prefs
           export DIST_F90_REQUEST="gfortran"
@@ -100,7 +102,7 @@ jobs:
           set +e
           source ./util/dist_source_me
 
-          for pkg in ${{ matrix.packages }}; do
+          for pkg in ${{ matrix.group.packages }}; do
             echo "::group::Building $pkg"
             (cd "$GITHUB_WORKSPACE/$pkg" && mk -j "$(nproc)") || exit 1
             echo "::endgroup::"
