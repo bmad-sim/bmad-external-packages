@@ -1,0 +1,109 @@
+name: Build External Packages
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+    inputs:
+      bmad-repository:
+        description: bmad-ecosystem repository providing the build system
+        default: bmad-sim/bmad-ecosystem
+      bmad-ref:
+        description: bmad-ecosystem ref
+        default: main
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: ${{ matrix.group.name }} (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, ubuntu-26.04]
+        group:
+          - name: PGPLOT
+            packages: PGPLOT
+          - name: plplot
+            packages: plplot
+            plot: plplot
+          - name: hdf5
+            packages: hdf5
+          - name: fftw
+            packages: fftw
+          # bmad's Master.cmake (used by lapack95) requires HDF5.
+          - name: lapack
+            packages: hdf5 lapack lapack95
+          - name: gsl
+            packages: gsl fgsl
+          - name: xraylib
+            packages: xraylib
+          - name: openmpi
+            packages: openmpi
+
+    steps:
+      - name: Checkout bmad-ecosystem
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ inputs.bmad-repository || 'bmad-sim/bmad-ecosystem' }}
+          ref: ${{ inputs.bmad-ref || 'main' }}
+          fetch-depth: 1
+
+      - name: Checkout external packages
+        uses: actions/checkout@v6
+        with:
+          path: external_packages
+          fetch-depth: 1
+
+      # System OpenMPI is intentionally omitted: acc_build_openmpi skips the
+      # build when it finds a compatible ompi_info on the PATH.
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install gfortran g++ cmake libtool-bin libreadline-dev libpango1.0-dev libssl-dev bc
+
+      - name: Copy packages into bmad tree
+        run: |
+          for pkg in ${{ matrix.group.packages }}; do
+            rm -rf "$GITHUB_WORKSPACE/$pkg"
+            cp -r "external_packages/$pkg" "$GITHUB_WORKSPACE/"
+          done
+
+      - name: Build ${{ matrix.group.packages }}
+        env:
+          PLOT_PACKAGE: ${{ matrix.group.plot || 'pgplot' }}
+        run: |
+          cat <<EOF >>./util/dist_prefs
+          export DIST_F90_REQUEST="gfortran"
+          export ACC_PLOT_PACKAGE="$PLOT_PACKAGE"
+          export ACC_PLOT_DISPLAY_TYPE="X"
+          export ACC_ENABLE_OPENMP="N"
+          export ACC_ENABLE_MPI="N"
+          export ACC_FORCE_BUILTIN_MPI="Y"
+          export ACC_ENABLE_GFORTRAN_OPTIMIZATION="Y"
+          export ACC_ENABLE_SHARED="N"
+          export ACC_ENABLE_SHARED_ONLY="Y"
+          export ACC_ENABLE_FPIC="Y"
+          export ACC_ENABLE_PROFILING="N"
+          export ACC_SET_GMAKE_JOBS="$(nproc)"
+          EOF
+
+          # dist_source_me isn't errexit-safe; failures are checked per package below.
+          set +e
+          source ./util/dist_source_me
+
+          for pkg in ${{ matrix.group.packages }}; do
+            echo "::group::Building $pkg"
+            (cd "$GITHUB_WORKSPACE/$pkg" && mk -j "$(nproc)") || exit 1
+            echo "::endgroup::"
+          done
