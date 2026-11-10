@@ -44,7 +44,14 @@ func_configure_make_install () {
 	export FFLAGS=$(echo ${FFLAGS} | sed -e 's/-fimplicit-none//g')
     fi
 
-    if [ `uname` == "Darwin" ] ; then
+    # With the GTK plot window (ACC_PLOT_DISPLAY_TYPE="GTK") the X11 driver is not needed.
+    if [ "${ACC_PLOT_DISPLAY_TYPE}" == "GTK" ] ; then
+        PLD_XWIN=OFF
+    else
+        PLD_XWIN=ON
+    fi
+
+    if [ `uname` == "Darwin" ] && [ "${PLD_XWIN}" == "ON" ] ; then
 	[ -d /opt/X11 ] \
 	    && export CFLAGS="${CFLAGS} -I/opt/X11/include" \
 	    || echo -e "\nPlease install XQuartz - http://xquartz.macosforge.org/landing/ \n" \
@@ -73,7 +80,8 @@ func_configure_make_install () {
             -DPLD_pscairo=ON \
             -DPLD_pngcairo=ON \
             -DPLD_svgcairo=ON \
-            -DPLD_xwin=ON \
+            -DPLD_extcairo=ON \
+            -DPLD_xwin=${PLD_XWIN} \
       #      -DPLD_psttf=OFF \
       #      -DPLD_psttfc=OFF \
             -DHAVE_SHAPELIB=OFF \            
